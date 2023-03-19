@@ -15,31 +15,39 @@
                     <label for="name" class="form-label">Category name:</label>
                     <input type="text" class="form-control" id="name" name="name" placeholder="name" value="{{$category->name??''}}">
                 </div>
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label for="slug" class="form-label">Slug:</label>
                     <input type="text" class="form-control" id="slug" name="slug" placeholder="slug" value="{{$category->slug??''}}">
-                </div>
+                </div> --}}
                 <div class="form-check">
-                    <input name="status" class="form-check-input" type="checkbox" id="status" {{ isset($category->status) ? 'checked':''}}>
+                    <input name="status" class="form-check-input" type="checkbox" id="status" {{ isset($category->status)&&$category->status == 1 ? 'checked':''}}>
                     <label class="form-label" for="status">
                         Status
                     </label>
                 </div>
                 <div class="form-group">
                     <label>Select parent category</label>
-                    <select class="form-control">
-                        <option>Select parent category</option>
-                        @foreach($parentCategories as $parentCategory)
-                        <option value="{{$parentCategory->id}}" {{isset($category)&&$parentCategory->id===$category->parent_id?'selected':''}}>{{$parentCategory->name}}</option>
-                        @endforeach
-                    </select>
+                  <select class="form-control select2" style="width: 100%;">
+                    <option>Select parent category</option>
+                    @foreach($parentCategories as $parentCategory)
+                    <option value="{{$parentCategory->id}}" {{isset($category)&&$parentCategory->id===$category->parent_id?'selected':''}}>{{$parentCategory->name}}</option>
+                    {{-- cách của thầy: <option value="{{$parentCategory->id}}" {{$category->parent_id==$parentCategory->id?'selected':''}}>{{$parentCategory->name}}</option --}}
+                    @endforeach
+                  </select>
                   </div>
             </div>
             <div class="card-footer">
                 <button type="submit" class="btn btn-primary">Save</button>
-                <button type="button" class="btn btn-secondary" href="#">back</button>
+                <button type="button" class="btn btn-secondary" href="{{route('categories.index')}}">back</button>
             </div>
         </form>
     </div>
 </div>
 @endsection
+
+@push('custom-js')
+<script>
+    $('.select2').select2()
+</script>
+
+@endpush

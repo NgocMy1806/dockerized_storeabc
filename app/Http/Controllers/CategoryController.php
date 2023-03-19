@@ -48,6 +48,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $category= $this->categoryService->store($request);
+        
         return redirect ()->route('categories.index')->with ('success', 'create successfully');
     }
 
@@ -85,11 +86,16 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $category=Category::find($id);
-        $category->update([
-            'name' => $request->name??null,
-            'status' => $request->status?1:0,
-        ]);
+        if($request->ajax()){
+            $this->categoryService->changeStatus($id,$request);
+
+            return response()->json([
+                'success'=>"change status OK",
+            ]);
+        }
+        // dd($request->name);
+        $category=$this->categoryService->update($request,$id);
+        
         return redirect ()->route('categories.index')->with ('success', 'edit successfully');
     }
 
@@ -99,18 +105,13 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function destroy($id)
     {
-        $category=Category::where('id', $id)->delete();
-        return redirect ()->route('categories.index')->with ('success', 'delete successfully');
-    }
-    public function changeStatus(Request $request)
-    {
-        $category=Category::find($request->id);
-        $category->update([
-            'status'=>$category->status?'0':'1',
-        ]);
+        $category=$this->categoryService->destroy($id);
+        // return redirect ()->route('categories.index')->with ('success', 'delete successfully');
         return response()->json([
-            'succeed'=>'success',
+            'success'=>"delete successfully",
         ]);
     }
+   
 }
