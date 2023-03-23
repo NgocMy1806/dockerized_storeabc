@@ -62,10 +62,9 @@
                                                     class="btn btn-primary">Edit</a>
                                                 <a
                                                     href="{{ route('categories.show', $category->id) }}"class="btn btn-success">View</a>
-                                                <button type="button" class="btn btn-default destroy-cat deletebutton1"
-                                                    data-toggle="modal"
-                                                    data-target="#deletemodal"data-url="{{ route('categories.destroy', $category->id) }}"
-                                                    id="deletebutton1">Delete </button>
+                                                    <a class="btn btn-outline-danger delete-button" data-title="{{ $category->name }}" data-link="{{ route('categories.destroy', $category->id) }}" data-toggle="modal" data-target="#deleteForm">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
 
                                             </td>
                                         </tr>
@@ -90,7 +89,30 @@
         </div>
         <!-- /.card -->
 
-
+<!-- Modal delete -->
+<div class="modal fade" id="deleteForm" tabindex="-1" aria-labelledby="deleteFormLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="#" id="delete-form" method="post">
+                @method('delete')
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteFormLabel">Delete Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete category: <b class="text-danger" id="title"></b>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-outline-danger">Yes</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
         <div class="modal fade" id="deletemodal" style="display: none; padding-right: 17px;" aria-modal="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -144,31 +166,32 @@
         </script>
         <script>
             
-                $(document).on("click", ".deletebutton1", function() {
-                    var delUrl = $(this).attr('data-url');
-                    $(".deletebutton2").attr('data-url', delUrl);
-                    console.log(delUrl);
-                    $('.deletebutton2').on('click', function(){
-                    const delUrl = $('.this').attr('data-url');
-                    console.log(delUrl);
-                   
+            <script>
+        $(document).ready(function () {
+            $('.delete-button').on('click', (e) => {
+                const title = $(e.target).data('title')
+                const link = $(e.target).data('link')
 
-                    $.ajax({
-                        type: "DELETE",
-                        url: delUrl,
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            // id: $(this).is(':checked') ? 1 : 0,
-                        },
-                        dataType: 'json',
-                        success: function(data) {
-                            toastr.success(data.success)
-                        }
-                    });
+                $('#title').html(title)
+                $('#delete-form').attr('action', link)
+            })
+            $('.toggle-active').on('click', function () {
+                const url = $(this).data('url');
+                console.log($(this).is(':checked'));
+                $.ajax({
+                    type: "PUT",
+                    url: url,
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        is_active: $(this).is(':checked') ? 1 : 0,
+                    },
+                    dataType: 'json',
+                    success: function(data)
+                    {
+                        toastr.success(data.success)
+                    }
                 });
-                });
-                
-                
-            
-        </script>
+            })
+        })
+    </script>
     @endpush

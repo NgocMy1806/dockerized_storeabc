@@ -10,7 +10,7 @@ class CategoryService extends BaseService
     {
         // return Category::paginate(10);
        
-        //cach 1: dùng with là eager load khi đang build câu query 
+        //cach 1: dùng with là eager load khi đang build câu query , chỉ dùng with thì mới phân trang được
         return Category::with(['parentCategory'])->paginate(10);
 
         //cach 2: dùng load là sau khi lấy data colection ra xong mình mới load thêm quan hệ
@@ -61,5 +61,12 @@ class CategoryService extends BaseService
        ]);
        return true;
     }
+    // public function destroy($id)
+    // {
+    //     $category = $this->categoryService->getCategory($id);
+    //     $category->delete();
+
+    //     return redirect()->route('categories.index')->with('success', 'Delete Category Successfully!');
+    // }
 
 }

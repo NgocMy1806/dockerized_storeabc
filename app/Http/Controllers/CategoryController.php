@@ -107,11 +107,10 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $category=$this->categoryService->destroy($id);
-        // return redirect ()->route('categories.index')->with ('success', 'delete successfully');
-        return response()->json([
-            'success'=>"delete successfully",
-        ]);
+        // $category = $this->categoryService->getCategoryDetail($id);
+        // $category->delete();
+        $category = $this->categoryService->destroy($id);
+        return redirect()->route('categories.index')->with('success', 'Delete Category Successfully!');
     }
    
 }
