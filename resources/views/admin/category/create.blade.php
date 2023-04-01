@@ -27,10 +27,10 @@
                 </div>
                 <div class="form-group">
                     <label>Select parent category</label>
-                  <select class="form-control select2" style="width: 100%;">
-                    <option>Select parent category</option>
-                    @foreach($parentCategories as $parentCategory)
-                    <option value="{{$parentCategory->id}}" {{isset($category)&&$parentCategory->id===$category->parent_id?'selected':''}}>{{$parentCategory->name}}</option>
+                  <select class="form-control select2" style="width: 100%;" name="parent_id">
+                    <option value=0>Select parent category</option>
+                    @foreach($parentCategories as $parent)
+                    <option value="{{$parent->id}}" {{isset($category)&&$parent->id===$category->parent_id?'selected':''}}>{{$parent->name}}</option>
                     {{-- cách của thầy: <option value="{{$parentCategory->id}}" {{$category->parent_id==$parentCategory->id?'selected':''}}>{{$parentCategory->name}}</option --}}
                     @endforeach
                   </select>

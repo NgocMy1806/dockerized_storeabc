@@ -85,8 +85,9 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
+    { 
         if($request->ajax()){
+           
             $this->categoryService->changeStatus($id,$request);
 
             return response()->json([
@@ -107,6 +108,7 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
+        dd('a');
         // $category = $this->categoryService->getCategoryDetail($id);
         // $category->delete();
         $category = $this->categoryService->destroy($id);

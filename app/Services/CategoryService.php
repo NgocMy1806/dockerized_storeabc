@@ -26,7 +26,7 @@ class CategoryService extends BaseService
         $category = Category::create([
             'name'  => $request->name ?? 'asc',
             'slug' => Str::slug($request->name ?? 'asc'),
-            'status' => $request->status??0,
+            'status' => $request->status?1:0,
             'parent_id' => $request->parent_id??0,
         ]);
       
@@ -34,7 +34,7 @@ class CategoryService extends BaseService
     }
 
     public function getCategoryDetail($request){
-        return Category::where('id',$request )->first();;
+        return Category::where('id',$request )->first();
     }
 
     public function update($request,$id){
@@ -68,5 +68,9 @@ class CategoryService extends BaseService
 
     //     return redirect()->route('categories.index')->with('success', 'Delete Category Successfully!');
     // }
+
+    public function getChildCategories(){
+        return Category::where('parent_id','<>',0)->get();
+    }
 
 }

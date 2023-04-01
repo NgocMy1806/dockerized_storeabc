@@ -28,20 +28,20 @@
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Categories
-                
               </p>
             </a>
            
           </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
+          <li class="nav-item has-treeview menu-open">
+            <a href="{{route('products.index')}}" class="nav-link @if(Route::is('products.*')) active @endif">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
-                Simple Link
-                <span class="right badge badge-danger">New</span>
+                Products
               </p>
             </a>
+           
           </li>
+          
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
