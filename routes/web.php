@@ -14,8 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 Route::prefix('admin')->group(__DIR__.'/admin.php');
 
+
+
 Route::get('/', function () {
     return view('admin.dashboard.index');
-});
+})->name('dashboard');
 
 
