@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::prefix('admin')->group(__DIR__.'/admin.php');
-
+Route::get('login.html',function(){
+    echo'View user login';
+});
 
 
 Route::get('/', function () {

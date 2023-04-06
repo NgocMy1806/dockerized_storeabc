@@ -39,7 +39,14 @@
                 Products
               </p>
             </a>
-           
+          </li>
+          <li class="nav-item has-treeview menu-open">
+            <a href="{{route('admin.logout')}}" class="nav-link">
+              <i class="nav-icon fas fa-sign-out-alt"></i> 
+              <p>
+                Logout
+              </p>
+            </a>
           </li>
           
         </ul>

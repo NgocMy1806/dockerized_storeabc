@@ -51,7 +51,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-
+        // dd(bcrypt(12345678));
         $childCategories = $this->categoryService->getChildCategories();
         return view('admin.products.create', ['childCategories' => $childCategories]);
     }
