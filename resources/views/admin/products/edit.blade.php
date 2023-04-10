@@ -81,6 +81,17 @@
                                         </select>
                                     </div>
 
+                                    <div class="form-group">
+                                        <label>Select tags</label>
+                                        <select class="form-control select2-tags" style="width: 100%;" name="tags[]" multiple>
+
+                                            @foreach ($product->tags as $tag)
+                                                <option value="{{ $tag->id }}" selected> {{ $tag->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+
                                     <div class="form-check">
                                         <input type="checkbox" name="is_hot" class="form-check-input" id="is_hot"
                                             {{ $product->is_hot == 1 ? 'checked' : '' }}>
@@ -99,9 +110,9 @@
                                     </div>
 
                                     <div class="preview_thumb row">
-                                        @if ($thumbnail)
+                                        @if ($product->thumbnail)
                                             <div class="col-md-3 h-100"><img class="w-100 h-100"
-                                                    src="{{ asset('storage/thumbnail/' . $thumbnail->name) }}"
+                                                    src="{{ asset('storage/thumbnail/' . $product->thumbnail->name) }}"
                                                     alt=""></div>
                                             {{-- @else
                                         <img
@@ -116,6 +127,7 @@
                                         <input type="file" class="form-control-file images" id="images"
                                             name="images[]" multiple>
                                     </div>
+
                                     <div class="preview row">
                                         @foreach ($images as $image)
                                             <div class="col-md-3 h-100"><img class="w-100 h-100"
@@ -123,6 +135,13 @@
                                             </div>
                                         @endforeach
                                     </div>
+                                    {{-- <div class="preview row">
+                                        @foreach ($product->images as $image)
+                                            <div class="col-md-3 h-100"><img class="w-100 h-100"
+                                                    src="{{ asset('storage/images/' . $image->name) }}" alt="">
+                                            </div>
+                                        @endforeach
+                                    </div> --}}
                                 </div>
                                 {{-- tab advanced  --}}
                                 <div class="tab-pane fade" id="advanced" role="tabpanel"

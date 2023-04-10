@@ -21,7 +21,7 @@ Route::middleware(['customAuth:admin'])->group(function () {
     Route::prefix('tags')->name('tags.')->group(function(){
         Route::get('search',[TagController::class,'searchTagByKey'])->name('searchTag');
     });
-    Route::get('/', function () {
+    Route::get('/admin', function () {
         return view('admin.dashboard.index');
     });
 });

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\ProductService;
 use App\Services\CategoryService;
+use App\Models\Product;
+use App\Services\TagService;
 use Illuminate\Http\Request;
 use App\Enums\sortTypeEnum;
 
@@ -90,17 +92,22 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
+        $product=Product::where('id',$id)->with(['tags','thumbnail',])->first();
         $childCategories = $this->categoryService->getChildCategories();
-        $product = $this->productService->getProductDetail($id);
-        $thumbnail = $this->productService->getThumbnail($id);
-        $images = $this->productService->getImages($id);
+        // $product = $this->productService->getProductDetail($id);
+        
+        //ko cần lấy riêng thumbnail, dùng with để get ra quan hệ là được r
+        //$thumbnail = $this->productService->getThumbnail($id);
+
+         $images = $this->productService->getImages($id);
+
         //dd($images);
         return view(
             'admin.products.edit',
             [
-                'childCategories' => $childCategories,
+                 'childCategories' => $childCategories,
                 'product' => $product,
-                'thumbnail' => $thumbnail,
+                // 'thumbnail' => $thumbnail,
                 'images' => $images
             ]
         );

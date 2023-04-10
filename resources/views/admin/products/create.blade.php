@@ -183,7 +183,8 @@
             ajax: {
                 url: '{{route('tags.searchTag')}}',
                 dataType: 'json',
-                perPage: 3,
+                perPage: 9,
+                // data gửi lên server 
                 data: function(params) {
                     var query = {
                         search: params.term,
@@ -193,6 +194,7 @@
                     // Query parameters will be ?search=[term]&page=[page]
                     return query;
                 },
+                // nội dung xử lí, biến data trong function bên dưới này là data sever trả về
                 processResults: function(data, params) {
                     params.page = params.page || 1;
 
@@ -211,7 +213,7 @@
                     return {
                         results: results,
                         pagination: {
-                            more: (params.page * 3) < data.total
+                            more: (params.page * 9) < data.total
                         }
                     };
                 }

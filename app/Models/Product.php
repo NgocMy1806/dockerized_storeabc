@@ -31,7 +31,7 @@ class Product extends Model
         return $this->morphMany(Media::class,'mediable')->where('type','images');
     }
     public function tags(){
-        return $this->belongsToMany(Tags::class,'product_tags','product_id','tag_id');
+        return $this->belongsToMany(Tag::class,'product_tags','product_id','tag_id');
     }
 
  

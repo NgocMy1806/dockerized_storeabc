@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\Media;
+use App\Services\TagService;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -11,7 +12,13 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 class ProductService extends BaseService
+
 {
+    private $tagService;
+    public function __construct(TagService $tagService){
+        $this->tagService = $tagService;
+    }
+
     public function getProducts($request)
     {
 
@@ -57,6 +64,8 @@ class ProductService extends BaseService
     {
         return $product = Product::where('id', $request)->first();
     }
+
+    
     public function getThumbnail($request)
     {
         $thumbnail = Media::where([['mediable_id', $request], ['mediable_type', 'App\Models\Product'], ['type', 'thumbnail']])->first();
@@ -112,14 +121,32 @@ class ProductService extends BaseService
                 'price' => $request->price ?? 0,
                 'sale_price' => $request->sale_price ?? 0,
                 'category_id' => $request->category_id ?? '',
-                'description' => $request->description ?? '',
+                // 'description' => $request->description ?? '',
+                'description' =>trim($request->input('description')),
                 'content' => $request->content ?? '',
                 'is_active' => !isset($request->is_active) ? 0 : 1,
                 'is_hot' => !isset($request->is_hot) ? 0 : 1,
             ]);
             $id = $product->id;
             // dd($id);
+
+            $tag=[];
+            if(isset($request->tags)){
+                foreach($request->tags as $tag){
+                    if(is_numeric($tag)){
+                        $tags[]=$tag;
+                    }
+                    else {
+                        $newTag=$this->tagService->store($tag);
+                        $tags[]=$newTag->id;
+                    }
+                }
+            }
+            $product->tags()->sync($tags);
+
             $this->store_thumb_and_image($id, $request);
+
+           
             DB::commit();
             return true;
         } catch (Throwable $e) {
