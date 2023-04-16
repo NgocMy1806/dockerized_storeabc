@@ -4,43 +4,45 @@
         <br>
         <div class="container-fluid">
 
-        <div class="heading-title text-center" style="padding-top: 25px">
-            <h2 class="">Trendy</h2>
-            <p>
-                Trendy product Trendy product Trendy product Trendy product
-            </p>
-        </div>
-        @if($hotProducts->isNotEmpty())
-        <ul class="content-home cbp-vm-switcher" style="list-style: none; padding-top:5px">
-            @foreach ($hotProducts as $product)
-                <li class="simpleCart_shelfItem col-sm-4">
-                    <div class="view view-first">
-                        <a class="cbp-vm-image" href="{{ route('detailPrd', $product->id) }}"></a>
-                        <div class="inner_content clearfix">
-                            <div class="product_image">
-                                <div class="mask1"><img
-                                        src="{{ asset('storage/thumbnail/' . $product->thumbnail->name) }}" alt="image"
-                                        class="img-responsive zoom-img"></div>
+            <div class="heading-title text-center" style="padding-top: 25px">
+                <h2 class="">Trendy</h2>
+                <p>
+                    Trendy product Trendy product Trendy product Trendy product
+                </p>
+            </div>
+            @if ($hotProducts->isNotEmpty())
+                <ul class="content-home cbp-vm-switcher" style="list-style: none; padding-top:5px">
+                    @foreach ($hotProducts as $product)
+                        <li class="simpleCart_shelfItem col-sm-4">
+                            <div class="view view-first">
+                                <a class="cbp-vm-image" href="{{ route('detailPrd', $product->id) }}"></a>
+                                <div class="inner_content clearfix">
+                                    <div class="product_image">
+                                        <div class="mask1"><img
+                                                src="{{ asset('storage/thumbnail/' . $product->thumbnail->name) }}"
+                                                alt="image" class="img-responsive zoom-img"></div>
 
 
-                                <div class="product_container"><a class="cbp-vm-image" href="{{ route('detailPrd', $product->id) }}">
-                                        <h4>{{$product->name}}</h4>
-                                        
-                                        <div class="price mount item_price">$ {{$product->price}}</div>
-                                    </a><a class="button item_add cbp-vm-icon cbp-vm-add" href="#">Add to cart</a>
+                                        <div class="product_container"><a class="cbp-vm-image"
+                                                href="{{ route('detailPrd', $product->id) }}">
+                                                <h4>{{ $product->name }}</h4>
+
+                                                <div class="price mount item_price">$ {{ $product->price }}</div>
+                                            </a>
+                                            <a class="button item_add cbp-vm-icon cbp-vm-add add-to-cart" href="#"
+                                                data-product-id="{{ $product->id }}">Add to cart</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                </li>
-
-                
-            @endforeach
+                        </li>
+                    @endforeach
             @endif
-            <div class="clearfix"> </div>
-        </ul>
-    </div>
+            <div class="clearfix">
+            </div>
+            </ul>
+        </div>
     </div>
     <div class="middle_content">
         <div class="container">
@@ -182,4 +184,36 @@
 @endsection
 
 @push('custom-js')
+    <script>
+        $(document).ready(function() {
+            $('.add-to-cart').click(function(event) {
+                event.preventDefault();
+
+                var productId = $(this).data('product-id');
+                var url = "{{ route('AddToCart', ':productId') }}".replace(':productId', productId);
+                console.log(productId);
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    dataType: 'JSON',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: productId
+                    },
+                    success: function(response) {
+
+                        $('#cart-total').html('$' + response.total.toFixed(2));
+                        $('#cart-count').text(response.cartCount);
+                        alert('Add to cart successfully!');
+                        // update the cart count in the session
+                        sessionStorage.setItem('cartCount', response.cartCount);
+                    },
+                    error: function(response) {
+                        console.log(response);
+                        alert('Error occurred while adding the product to the cart!');
+                    }
+                });
+            });
+        });
+    </script>
 @endpush

@@ -101,7 +101,7 @@ class ProductController extends Controller
 
          $images = $this->productService->getImages($id);
 
-        //dd($images);
+        
         return view(
             'admin.products.edit',
             [
@@ -122,8 +122,17 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //  dd($id);
+        //   dd($request->hasFile('thumbnail'));
+        
         $product = $this->productService->update($id,$request);
+        // if($request->ajax()){
+           
+        //     $this->productService->changeStatus($id,$request);
+
+        //     return response()->json([
+        //         'success'=>"change status OK",
+        //     ]);
+        // }
 
         return redirect()->route('products.index')->with('success', 'edit successfully');
     }

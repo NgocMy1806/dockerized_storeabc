@@ -8,7 +8,7 @@
 
                             <ul>
                                 @foreach ($watchCategories as $watchCategory)
-                                    <li><a href="#">{{ $watchCategory->name }}</a></li>
+                                    <li><a href={{route('listChildWatches',$watchCategory->id)}}>{{ $watchCategory->name }}</a></li>
                                 @endforeach
                             </ul>
                         </div>
@@ -26,7 +26,7 @@
 
                             <ul>
                                 @foreach ($bagCategories as $bagCategory)
-                                    <li><a href="#">{{ $bagCategory->name }}</a></li>
+                                    <li><a href="{{route('listChildBags',$bagCategory->id)}}">{{ $bagCategory->name }}</a></li>
                                 @endforeach
 
                             </ul>

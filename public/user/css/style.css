@@ -1261,10 +1261,29 @@ ul.women_pagenation li a:hover{
 }
 .mask1 {
 	text-decoration: none;
+	
 	overflow: hidden;
 	display: block;
 }
+.cbp-vm-add {
+	color: #000;
+    background: #F9D9BE;
+    padding: 6px 15px;
+    margin: 10px 0 0;
+    display: inline-block;
+    transition: background 0.2s;
+    font-size: 0.8125em;
+}
+.cbp-vm-add:hover {
+	color: #fff;
+	background:#E04603;
+	text-decoration:none;
+}
+.cbp-vm-add:before {
+	margin-right: 5px;
+}
 img.zoom-img {
+	
 	-webkit-transform: scale(1, 1);
 	-webkit-transition-timing-function: ease-out;
 	/* -webkit-transition-duration: 250ms; */

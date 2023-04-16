@@ -72,10 +72,10 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Select category</label>
-                                        <select class="form-control select2" style="width: 100%;">
+                                        <select class="form-control select2" name="category_id"  style="width: 100%;">
                                             <option>Select category</option>
                                             @foreach ($childCategories as $category)
-                                                <option {{ $category->id === $product->category_id ? 'selected' : '' }}
+                                                <option {{ $category->id === $product->category->id ? 'selected' : '' }}
                                                     value="{{ $category->id }}">{{ $category->name }}</option>
                                             @endforeach
                                         </select>

@@ -17,17 +17,21 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <!-- Custom Theme files -->
 <link href="{{asset('user/css/style.css')}}" rel='stylesheet' type='text/css' />
+{{-- <link href="{{asset('user/css/component.css')}}" rel='stylesheet' type='text/css' /> --}}
 <link  href="{{asset('user/css/flexslider.css')}}"rel="stylesheet" type="text/css" media="screen" />
 <!-- Custom Theme files -->
 <!--webfont-->
 
 <script type="text/javascript" src="{{asset('user/js/jquery-1.11.1.min.js')}}"></script>
+{{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script> --}}
 <!-- start menu -->
 <link href="{{asset('user/css/megamenu.css')}}"rel="stylesheet" type="text/css" media="all" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script type="text/javascript" src="{{asset('user/js/megamenu.js')}}"></script>
 <script>$(document).ready(function(){$(".megamenu").megamenu();});</script>
 <script src="{{asset('user/js/jquery.easydropdown.js')}}"></script>
 <script src="{{asset('user/js/simpleCart.min.js')}}"> </script>
+<script src="{{asset('user/js/custom_addToCart.js')}}"> </script>
 
 <script src="{{asset('user/js/easyResponsiveTabs.js')}}" type="text/javascript"></script>
 	{{-- <script type="text/javascript">
@@ -42,14 +46,14 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 </head>
 <body>
-	<div class="banner">
+	<div class="banner" style="min-height:341.510px">
    	  <div class="container">
    	  	@include('user.layout.components.headertop')
 	  <div class="header_bottom">
 
         {{-- slider để chuyển banner --}}
 	   <div class="logo">
-		  <h1><a href="{{route('index')}}"><span class="m_1">W</span>atches</a></h1>
+		  <h1><a href="{{route('index')}}"><span class="m_1">W</span>ab</a></h1>
 	   </div>
    	   {{-- nav menu --}}
        @include('user.layout.components.nav')

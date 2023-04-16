@@ -27,7 +27,15 @@ class EcService extends BaseService
     }
 
     public function getListWatches(){
-        return Product::where('is_hot',1)->with('thumbnail')->get()->paginate(9);
+        return Product::select('products.*')
+        ->join('categories', 'products.category_id', '=', 'categories.id')
+        ->whereIn('products.category_id', function ($query) {
+            $query->select('id')
+                  ->from('categories')
+                  ->whereNotIn('parent_id',[0,9]);
+        })
+        ->with('thumbnail')->paginate(9);
+
     }
 
     public function getListWatchesOfChildCategory($category){
@@ -42,14 +50,14 @@ class EcService extends BaseService
         ->whereIn('products.category_id', function ($query) {
             $query->select('id')
                   ->from('categories')
-                  ->where('parent_id', '<>', 0);
+                  ->whereNotIn('parent_id',[0,8]);
         })
-        ->with('thumbnail')->get();
+        ->with('thumbnail')->paginate(9);
 
     }
 
-    public function getListBagsOfChildCategory($category){
-        return Product::where('category_id',$category)->with('thumbnail')->get()->paginate(9);
+    public function getListPrdOfChildCategory($category){
+        return Product::where('category_id',$category)->with('thumbnail')->paginate(9);
     }
 
     public function countBags($category){

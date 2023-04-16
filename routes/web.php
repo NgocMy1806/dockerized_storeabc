@@ -29,22 +29,25 @@ Route::get('/', [EcController::class, 'index'])->name('index');
 // Route::get('/', function () {
 //     return view('user.index');
 // });
-
+Route::get('/cart',[EcController::class, 'showCart'])->name('showCart');
 Route::get('/bags',[EcController::class, 'getListBags'])->name('listBags');
 Route::get('/bags/{id}',[EcController::class, 'getListBagsOfChildCategory'])->name('listChildBags');
 
 Route::get('/watches',[EcController::class, 'getListWatches'])->name('listWatches');
 Route::get('/watches/{id}',[EcController::class, 'getListWatchesOfChildCategory'])->name('listChildWatches');
 
-Route::get('/{id}',[EcController::class, 'getDetailPrd'])->name('detailPrd');
+ Route::get('/{id}',[EcController::class, 'getDetailPrd'])->name('detailPrd');
+
 Route::post('/addtocart/{id}',[EcController::class, 'AddToCart'])->name('AddToCart');
+Route::delete('/cart/{id}', [EcController::class,'removeFromCart'])->name('removeFromCart'); 
+Route::delete('/cart', [EcController::class,'EmptyCart'])->name('EmptyCart'); 
 
 
-Route::get('/cart',function(){
-    return view ('user.cart');
-});
 
-
+// Route::get('/cart', function () {
+   
+//     echo"hihi";
+//      });
 
 
 

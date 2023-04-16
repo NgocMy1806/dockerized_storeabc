@@ -8,6 +8,7 @@ use App\Services\CategoryService;
 use App\Services\EcService;
 use App\Enums\sortTypeEnum;
 use App\Models\Product;
+use Illuminate\Support\Facades\Session;
 
 class EcController extends Controller
 {
@@ -34,7 +35,10 @@ class EcController extends Controller
     public function index()
     {
         $hotProducts = $this->ecService->getTop3HotProducts();
-// dd($this->watchCategories);
+        $cart = session()->get('cart');
+        $total = session()->get('total');
+
+       
         return view(
             'user.index',
             [
@@ -47,31 +51,83 @@ class EcController extends Controller
 
     public function getListBags()
     {
-        $listBags = $this->ecService->getListBags();
-        // $count=$this->ecService->countBags();
+        $products = $this->ecService->getListBags();
+
         return view(
             'user.listbags',
             [
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
-                'listBags' => $listBags
+                'products' => $products
             ]
         );
     }
 
-    public function getListBagsOfChildCategory($category)
+
+    public function getListBagsOfChildCategory($category, Request $request)
     {
-        $listChildBags = $this->ecService->getListBagsOfChildCategory($category);
+        // dd($request->all());
+        $products = $this->ecService->getListPrdOfChildCategory($category);
+
+        if ($request->ajax()) {
+            return view(
+                'user.listPrdByCateAjax',
+                [
+                    'watchCategories' => $this->watchCategories,
+                    'bagCategories' => $this->bagCategories,
+                    'products' => $products
+                ]
+            )->render();
+        }
         return view(
             'user.listbags',
             [
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
-                'listChildBags' => $listChildBags
+                'products' => $products
             ]
         );
     }
 
+    public function getListWatches()
+    {
+        $products = $this->ecService->getListWatches();
+
+        return view(
+            'user.listwatches',
+            [
+                'watchCategories' => $this->watchCategories,
+                'bagCategories' => $this->bagCategories,
+                'products' => $products
+            ]
+        );
+    }
+
+    //this function use to get list watch of child category
+    public function getListWatchesOfChildCategory($category, Request $request)
+    {
+        // dd($request->all());
+        $products = $this->ecService->getListPrdOfChildCategory($category);
+
+        if ($request->ajax()) {
+            return view(
+                'user.listPrdByCateAjax',
+                [
+                    'watchCategories' => $this->watchCategories,
+                    'bagCategories' => $this->bagCategories,
+                    'products' => $products
+                ]
+            )->render();
+        }
+        return view(
+            'user.listwatches',
+            [
+                'watchCategories' => $this->watchCategories,
+                'bagCategories' => $this->bagCategories,
+                'products' => $products
+            ]
+        );
+    }
     public function getDetailPrd($id)
     {
         $product = Product::where('id', $id)->with(['tags', 'thumbnail'])->first();
@@ -87,4 +143,106 @@ class EcController extends Controller
             ]
         );
     }
+    public function addToCart(Request $request, $id)
+    {
+        $product = Product::with('thumbnail')->find($id);
+
+        $thumbnail = $product->thumbnail()->first()->name;
+        if (!$product) {
+            abort(404);
+        }
+
+        $cart = session()->get('cart', []);
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity'] += $request->quantity;
+            // $cart[$id]['quantity']++;
+        } else {
+            $cart[$id] = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'quantity' => 1,
+                'thumbnail' => $thumbnail
+            ];
+        }
+        $total = 0;
+        foreach ($cart as $item) {
+            $total += $item['price'] * $item['quantity'];
+        }
+
+        session()->put('cart', $cart);
+        session()->put('total', $total);
+        
+        return response()->json([
+            'success' => 'Product added to cart successfully!',
+            'cart' => $cart,
+            'total'=> $total,
+            'cartCount' => count(session('cart')),
+        ]);
+    }
+
+    public function showCart()
+    {
+        $cart = session()->get('cart', []);
+
+        $total = 0;
+
+        foreach ($cart as $item) {
+            $total += $item['price'] * $item['quantity'];
+        }
+
+        $e = array_sum(array_column($cart, 'quantity'));
+       
+        return view(
+            'user.cart',
+            [
+                'watchCategories' => $this->watchCategories,
+                'bagCategories' => $this->bagCategories,
+                'cart' => $cart,
+                'total' =>  $total
+            ]
+        );
+    }
+    public function EmptyCart()
+    {
+       
+        session()->forget('cart');
+        session()->forget('total');
+        return redirect()->back()->with('success', 'Cart emptied successfully!');
+    }
+
+    public function removeFromCart($id)
+    {
+        $cart = session()->get('cart', []);
+        $total = 0;
+        $quantity = 0;
+
+        if (isset($cart[$id])) {
+            $quantity = $cart[$id]['quantity'];
+            unset($cart[$id]);
+            session()->put('cart', $cart);
+        }
+
+        foreach ($cart as $item) {
+            $total += $item['price'] * $item['quantity'];
+            $quantity += $item['quantity'];
+        }
+
+        session()->put('total', $total);
+        session()->put('quantity', $quantity);
+
+        // return redirect()->back()->with('success', 'Product removed from cart successfully!');
+        return redirect()->route('showCart')->with('success', 'Product removed from cart successfully!');
+    }
+
+    // public function removeFromCart($id) {
+    //     $cart = session()->get('cart', []);
+
+    //     if(isset($cart[$id])) {
+    //         unset($cart[$id]);
+    //         session()->put('cart', $cart);
+    //     }
+
+    //     return redirect()->route('showCart')->with('success', 'Product removed from cart successfully!');
+    // }
 }

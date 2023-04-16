@@ -15,7 +15,8 @@ class ProductService extends BaseService
 
 {
     private $tagService;
-    public function __construct(TagService $tagService){
+    public function __construct(TagService $tagService)
+    {
         $this->tagService = $tagService;
     }
 
@@ -62,10 +63,10 @@ class ProductService extends BaseService
 
     public function getProductDetail($request)
     {
-        return $product = Product::where('id', $request)->first();
+        return Product::where('id', $request)->with('category')->first();
     }
 
-    
+
     public function getThumbnail($request)
     {
         $thumbnail = Media::where([['mediable_id', $request], ['mediable_type', 'App\Models\Product'], ['type', 'thumbnail']])->first();
@@ -79,10 +80,10 @@ class ProductService extends BaseService
         return $images;
     }
 
-    public function store_thumb_and_image($id, $request)
+    public function store_thumb($id, $request)
     {
         $product = Product::find((int) $id);
-        if ($request->hasFile('thumbnail')) {
+     
             $fileName = Carbon::now()->format('H_i_s') . '-' . $request->file('thumbnail')->getClientOriginalName();
             Media::create([
                 'mediable_type' => Product::class,
@@ -91,8 +92,12 @@ class ProductService extends BaseService
                 'name' => $fileName,
             ]);
             $request->file('thumbnail')->storeAs('public/thumbnail', $fileName);
-        }
-        if (is_array($request->images)) {
+        
+    }
+    public function store_images($id, $request)
+    {
+        $product = Product::find((int) $id);
+       
             foreach ($request->images as $image) {
                 $fileName = Carbon::now()->format('H_i_s') . '-' . $image->getClientOriginalName();
                 Media::create([
@@ -104,9 +109,8 @@ class ProductService extends BaseService
 
                 $image->storeAs('public/images', $fileName);
             }
-        }
+        
     }
-
     public function store($request)
     {
         try {
@@ -122,7 +126,7 @@ class ProductService extends BaseService
                 'sale_price' => $request->sale_price ?? 0,
                 'category_id' => $request->category_id ?? '',
                 // 'description' => $request->description ?? '',
-                'description' =>trim($request->input('description')),
+                'description' => trim($request->input('description')),
                 'content' => $request->content ?? '',
                 'is_active' => !isset($request->is_active) ? 0 : 1,
                 'is_hot' => !isset($request->is_hot) ? 0 : 1,
@@ -130,23 +134,23 @@ class ProductService extends BaseService
             $id = $product->id;
             // dd($id);
 
-            $tag=[];
-            if(isset($request->tags)){
-                foreach($request->tags as $tag){
-                    if(is_numeric($tag)){
-                        $tags[]=$tag;
-                    }
-                    else {
-                        $newTag=$this->tagService->store($tag);
-                        $tags[]=$newTag->id;
+            $tag = [];
+            if (isset($request->tags)) {
+                foreach ($request->tags as $tag) {
+                    if (is_numeric($tag)) {
+                        $tags[] = $tag;
+                    } else {
+                        $newTag = $this->tagService->store($tag);
+                        $tags[] = $newTag->id;
                     }
                 }
             }
             $product->tags()->sync($tags);
 
-            $this->store_thumb_and_image($id, $request);
+            $this->store_thumb($id, $request);
+            $this->store_images($id, $request);
 
-           
+
             DB::commit();
             return true;
         } catch (Throwable $e) {
@@ -157,13 +161,19 @@ class ProductService extends BaseService
 
 
     //del existing thumbnail and image of product
-    public function del_Thumb_and_images($id)
+    public function del_Thumb($id)
     {
         $product = Product::find($id);
         if (!empty($product->thumbnail)) {
             Storage::disk('public')->delete('thumbnail/' . $product->thumbnail->name);
             $product->thumbnail->delete();
         }
+       
+    }
+    public function del_images($id)
+    {
+        $product = Product::find($id);
+       
         $images = Media::where([['mediable_id', $id], ['mediable_type', 'App\Models\Product'], ['type', 'product_image']])->get();
         if (!empty($images)) {
             // dd($product->images);
@@ -175,16 +185,16 @@ class ProductService extends BaseService
         }
     }
 
+
     public function update($id, $request)
     {
 
         try {
             DB::beginTransaction();
             $product = Product::find((int) $id);
-            
+
             // dd($request->category_id);
-            //del existing thumbnail and image of product
-            $this->del_Thumb_and_images($id);
+          
             $product->update([
                 'name' => $request->name,
                 'slug' => Str::slug($request->name),
@@ -198,7 +208,15 @@ class ProductService extends BaseService
                 'is_hot' => !isset($request->is_hot) ? 0 : 1,
             ]);
 
-            $this->store_thumb_and_image($id, $request);
+            if ($request->hasFile('thumbnail')) {
+                // dd('co file');
+                $this->del_Thumb($id);
+                $this->store_thumb($id, $request);
+            }
+            if (is_array($request->images)) {
+                $this->del_images($id);
+                $this->store_images($id, $request);
+            }
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
@@ -212,7 +230,8 @@ class ProductService extends BaseService
         try {
             DB::beginTransaction();
             $product = Product::find($id);
-            $this->del_Thumb_and_images($id);
+            $this->del_Thumb($id);
+            $this->del_images($id);
             //dd($product->thumbnail );
             // if (!empty($product->thumbnail)) {
             //     Storage::disk('public')->delete('thumbnail/' . $product->thumbnail->name);

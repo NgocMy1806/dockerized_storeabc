@@ -9,8 +9,8 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-                        
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -79,7 +79,7 @@
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
-                                            
+
                                             <th scope="col">name</th>
                                             {{-- <th scope="col">slug</th> --}}
                                             <th scope="col">thumbnail</th>
@@ -87,15 +87,15 @@
                                             <th scope="col">stock</th>
                                             <th scope="col">price</th>
                                             <th scope="col">category</th>
-                                            <th scope="col">hot</th>
+                                            
                                             <th scope="col">status</th>
+                                            <th scope="col">is_hot</th>
                                             <th scope="col">action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody> 
                                         @foreach ($products as $product)
-                                            <tr>
-                                               
+                                            <tr> 
                                                 <td>{{ $product->name }}</td>
                                                 {{-- <td>{{ $product->slug }}</td> --}}
                                                 <td>
@@ -112,17 +112,17 @@
                                                 <td>{{ $product->category->name ?? '' }}</td>
                                                 <td><input type="checkbox"
                                                         data-url="{{ route('products.update', $product->id) }}"
-                                                        name="" class="toggle-active" id=""
-                                                        {{ $product->status == 1 ? 'checked' : '' }}></td>
+                                                        name="is_active" class="toggle-active" id="toggle-is-active"
+                                                        {{ $product->is_active == 1 ? 'checked' : '' }}></td>
                                                 <td><input type="checkbox"
                                                         data-url="{{ route('products.update', $product->id) }}"
-                                                        name="" class="toggle-active" id=""
-                                                        {{ $product->is_hot == 1 ? 'checked' : '' }}></td>
+                                                        name="is_hot" class="toggle-active" id="toggle-is-hot"
+                                                        {{ $product->is_hot === 1 ? 'checked' : '' }}></td>
                                                 <td>
                                                     <a href="{{ route('products.edit', $product->id) }}"
                                                         class="btn btn-primary">Edit</i></a>
-                                                    <a
-                                                        href="{{ route('products.show', $product->id) }}"class="btn btn-success">View</a>
+                                                    {{-- <a
+                                                        href="{{ route('products.show', $product->id) }}"class="btn btn-success">View</a> --}}
                                                     <button type="button" class="btn btn-secondary delete-button"
                                                         data-title="{{ $product->name }}"
                                                         data-link="{{ route('products.destroy', $product->id) }}"
@@ -210,7 +210,7 @@
 
 
 
-                $('.toggle-active').on('click', function() {
+                $('#toggle-is-hot').on('click', function() {
                     const url = $(this).data('url');
                     console.log($(this).is(':checked'));
                     $.ajax({
