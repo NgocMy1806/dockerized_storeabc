@@ -33,7 +33,7 @@ class EcController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+   {
         $hotProducts = $this->ecService->getTop3HotProducts();
         $cart = session()->get('cart');
         $total = session()->get('total');
@@ -235,14 +235,27 @@ class EcController extends Controller
         return redirect()->route('showCart')->with('success', 'Product removed from cart successfully!');
     }
 
-    // public function removeFromCart($id) {
-    //     $cart = session()->get('cart', []);
+    public function getCheckout(){
+        $cart = session()->get('cart', []);
 
-    //     if(isset($cart[$id])) {
-    //         unset($cart[$id]);
-    //         session()->put('cart', $cart);
-    //     }
+        $total = 0;
 
-    //     return redirect()->route('showCart')->with('success', 'Product removed from cart successfully!');
-    // }
+        foreach ($cart as $item) {
+            $total += $item['price'] * $item['quantity'];
+        }
+
+        $e = array_sum(array_column($cart, 'quantity'));
+       
+        return view(
+            'user.checkout',
+            [
+                'watchCategories' => $this->watchCategories,
+                'bagCategories' => $this->bagCategories,
+                'cart' => $cart,
+                'total' =>  $total
+            ]
+        );
+    }
+
+
 }

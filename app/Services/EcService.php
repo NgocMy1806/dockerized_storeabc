@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Storage;
 class EcService extends BaseService
 {
     public function getWatchCategories(){
-        return Category::where('parent_id',8)->get();
+        return Category::where('parent_id',2)->get();
     }
     public function getBagCategories(){
-        return Category::where('parent_id',9)->withCount('products')->get();
+        return Category::where('parent_id',1)->withCount('products')->get();
     }
     public function getTop3HotProducts(){
         return Product::where('is_hot',1)->take(3)->with('thumbnail')->get();
@@ -32,7 +32,7 @@ class EcService extends BaseService
         ->whereIn('products.category_id', function ($query) {
             $query->select('id')
                   ->from('categories')
-                  ->whereNotIn('parent_id',[0,9]);
+                  ->whereNotIn('parent_id',[0,1]);
         })
         ->with('thumbnail')->paginate(9);
 
@@ -50,7 +50,7 @@ class EcService extends BaseService
         ->whereIn('products.category_id', function ($query) {
             $query->select('id')
                   ->from('categories')
-                  ->whereNotIn('parent_id',[0,8]);
+                  ->whereNotIn('parent_id',[0,1]);
         })
         ->with('thumbnail')->paginate(9);
 
@@ -60,10 +60,10 @@ class EcService extends BaseService
         return Product::where('category_id',$category)->with('thumbnail')->paginate(9);
     }
 
-    public function countBags($category){
-        $count = Product::where('category_id', $category)->count();
-        return $count;
-    }
+    // public function countBags($category){
+    //     $count = Product::where('category_id', $category)->count();
+    //     return $count;
+    // }
 
     public function getImages($request)
     {

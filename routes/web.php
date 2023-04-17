@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EcController;
-use App\Http\Controllers\StripePaymentController; 
+use App\Http\Controllers\StripePaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,43 +14,36 @@ use App\Http\Controllers\StripePaymentController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::prefix('admin')->group(__DIR__.'/admin.php');
+
+Route::prefix('admin')->group(__DIR__ . '/admin.php');
 Route::get('/admin', function () {
     return view('admin.dashboard.index');
 })->name('dashboard');
 
 
 // route user 
-Route::get('login.html',function(){
-    echo'View user login';
+Route::get('login.html', function () {
+    echo 'View user login';
 });
 
 Route::get('/', [EcController::class, 'index'])->name('index');
-// Route::get('/', function () {
-//     return view('user.index');
-// });
-Route::get('/cart',[EcController::class, 'showCart'])->name('showCart');
 
-Route::get('/checkout', function () {
-   
-    return view('user.checkout');
-     })->name('checkout'); ;
-
-Route::get('/bags',[EcController::class, 'getListBags'])->name('listBags');
-Route::get('/bags/{id}',[EcController::class, 'getListBagsOfChildCategory'])->name('listChildBags');
-
-Route::get('/watches',[EcController::class, 'getListWatches'])->name('listWatches');
-Route::get('/watches/{id}',[EcController::class, 'getListWatchesOfChildCategory'])->name('listChildWatches');
-
- Route::get('/{id}',[EcController::class, 'getDetailPrd'])->name('detailPrd');
-
-Route::post('/addtocart/{id}',[EcController::class, 'AddToCart'])->name('AddToCart');
-Route::delete('/cart/{id}', [EcController::class,'removeFromCart'])->name('removeFromCart'); 
-Route::delete('/cart', [EcController::class,'EmptyCart'])->name('EmptyCart'); 
+Route::get('/cart', [EcController::class, 'showCart'])->name('showCart');
 
 
 
+Route::get('/checkout', [EcController::class, 'getCheckout'])->name('getCheckout');
+Route::post('/checkout', [StripePaymentController::class, 'checkout'])->name('checkout');
+Route::get('/success',  [StripePaymentController::class, 'checkoutOK'])->name('checkoutOK');
 
+Route::get('/bags', [EcController::class, 'getListBags'])->name('listBags');
+Route::get('/bags/{id}', [EcController::class, 'getListBagsOfChildCategory'])->name('listChildBags');
 
+Route::get('/watches', [EcController::class, 'getListWatches'])->name('listWatches');
+Route::get('/watches/{id}', [EcController::class, 'getListWatchesOfChildCategory'])->name('listChildWatches');
 
+Route::get('/{id}', [EcController::class, 'getDetailPrd'])->name('detailPrd');
 
+Route::post('/addtocart/{id}', [EcController::class, 'AddToCart'])->name('AddToCart');
+Route::delete('/cart/{id}', [EcController::class, 'removeFromCart'])->name('removeFromCart');
+Route::delete('/cart', [EcController::class, 'EmptyCart'])->name('EmptyCart');

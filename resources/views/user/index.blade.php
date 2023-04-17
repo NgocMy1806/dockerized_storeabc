@@ -2,7 +2,7 @@
 @section('content')
     <div class="container">
         <br>
-        <div class="container-fluid">
+        <div class="container-fluid"> 
 
             <div class="heading-title text-center" style="padding-top: 25px">
                 <h2 class="">Trendy</h2>
