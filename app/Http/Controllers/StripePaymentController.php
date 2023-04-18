@@ -11,7 +11,8 @@ use App\Models\Order;
 use App\Models\Customer;
 use App\Models\OrderDetail;
 use Stripe\PaymentIntent;
-
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class StripePaymentController extends Controller
 {
@@ -27,7 +28,7 @@ class StripePaymentController extends Controller
       'payment_method_types' => ['card'],
       'line_items' => $this->getLineItems($cart),
       'mode' => 'payment',
-      'success_url' => route('checkoutOK'),
+      'success_url' => route('checkoutOK') . '?session_id={CHECKOUT_SESSION_ID}',
       'cancel_url' => route('getCheckout'),
     ]);
 
@@ -49,7 +50,7 @@ class StripePaymentController extends Controller
           'unit_amount' => $item['price'] * 100, // Stripe requires the price in cents
           'product_data' => [
             'name' => $item['name'],
-           'images' => [ asset('storage/thumbnail/' .  $item['thumbnail'])]
+            'images' => [asset('storage/thumbnail/' .  $item['thumbnail'])]
           ],
         ],
         'quantity' => $item['quantity'],
@@ -62,56 +63,70 @@ class StripePaymentController extends Controller
   public function checkoutOK(Request $request)
   {
 
-    dd($request->all());
-// Retrieve email from session
-$email = Session::get('checkout.email');
-dump($email);
-// Get the Stripe session ID from the URL parameters
-$stripeSessionId = $request->query('session_id');
-dd($stripeSessionId);
-// Retrieve the Stripe session from the API
-Stripe::setApiKey(config('services.stripe.secret'));
+    // dd($request->all());
+    // Retrieve email from session
+    $email = Session::get('checkout.email');
 
-$stripeSession = StripeSession::retrieve($stripeSessionId);
-dump($stripeSession);
-// Get the payment intent from the Stripe session
-$stripePaymentIntentId = $stripeSession->payment_intent;
-dump($stripePaymentIntentId);
-$stripePaymentIntent = PaymentIntent::retrieve($stripePaymentIntentId);
-dump($stripePaymentIntent);
+    // Get the Stripe session ID from the URL parameters
+    $stripeSessionId = $request->query('session_id');
 
-// Retrieve cart from session
-$cart = Session::get('cart');
+    // Retrieve the Stripe session from the API
+    Stripe::setApiKey(config('services.stripe.secret'));
 
-$customer= new Customer;
-$customer->email = $email;
+    $stripeSession = StripeSession::retrieve($stripeSessionId);
+    // dd($stripeSession);
+    // Get the payment intent from the Stripe session
+    $stripePaymentIntentId = $stripeSession->payment_intent;
 
-// Create a new order in the database
-$order = new Order();
-$order->customer_id = $customer->id;
-$order->total_amount = $stripePaymentIntent->amount / 100;
-$order->order_status = 0;
-$order->payment_status = 1;
-$order->transaction_id = $stripePaymentIntentId ;
-$order->is_pickup =0;
-$order->payment_method = 1;
-$order->save();
+    $stripePaymentIntent = PaymentIntent::retrieve($stripePaymentIntentId);
+    // dd($stripePaymentIntent);
 
-// Create order items for each product in the cart
-foreach ($cart as $item) {
-    $orderItem = new OrderDetail();
-    $orderItem->order_id = $order->id;
-    $orderItem->product_id = $item['product_id'];
-    $orderItem->quantity = $item['quantity'];
-    $orderItem->price = $item['price'];
-    $orderItem->save();
-}
+    // Retrieve cart from session
+    $cart = Session::get('cart');
+// dd($cart);
+    try {
 
-// Clear the cart in the session
-Session::forget('cart');
+      DB::beginTransaction();
+      $customer = new Customer;
+      $customer->name = 'test';
+      $customer->email = $email;
+      $customer->country_id = '1';
+      $customer->state_id = '1';
+      $customer->city_id = '1';
+      $customer->address_bottom = '1';
+      
 
-// Redirect to the order confirmation page
-return view('user.checkoutOK')->with('order', $order);
-}
-   
+      $customer->save();
+      // Create a new order in the database
+      $order = new Order();
+      $order->customer_id = $customer->id;
+      $order->total_amount = $stripePaymentIntent->amount / 100;
+      $order->order_status = 0;
+      $order->payment_status = 1;
+      $order->transaction_id = $stripePaymentIntentId;
+      $order->is_pickup = 0;
+      $order->payment_method = 1;
+      $order->save();
+
+      // Create order items for each product in the cart
+      foreach ($cart as $item) {
+        $orderItem = new OrderDetail();
+        $orderItem->order_id = $order->id;
+        $orderItem->product_id = $item['id'];
+        $orderItem->quantity = $item['quantity'];
+        $orderItem->price = $item['price'];
+        $orderItem->save();
+      }
+
+      // Clear the cart in the session
+      Session::forget('cart');
+
+      // Redirect to the order confirmation page
+      DB::commit();
+      return view('user.checkoutOK')->with('order', $order);
+    } catch (Throwable $e) {
+      DB::rollBack();
+      dd($e);
+    }
+  }
 }

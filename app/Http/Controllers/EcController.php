@@ -34,6 +34,7 @@ class EcController extends Controller
      */
     public function index()
    {
+    // dd(bcrypt('12345678'));
         $hotProducts = $this->ecService->getTop3HotProducts();
         $cart = session()->get('cart');
         $total = session()->get('total');
