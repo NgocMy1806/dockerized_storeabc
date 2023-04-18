@@ -33,6 +33,9 @@ Route::get('/cart', [EcController::class, 'showCart'])->name('showCart');
 
 
 Route::get('/checkout', [EcController::class, 'getCheckout'])->name('getCheckout');
+Route::get('/getStates/{id}',[EcController::class, 'getStates'])->name('getStates');
+Route::get('/getCities/{id}',[EcController::class, 'getCities'])->name('getCities');
+
 Route::post('/checkout', [StripePaymentController::class, 'checkout'])->name('checkout');
 Route::get('/success',  [StripePaymentController::class, 'checkoutOK'])->name('checkoutOK');
 

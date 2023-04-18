@@ -120,6 +120,7 @@ class StripePaymentController extends Controller
 
       // Clear the cart in the session
       Session::forget('cart');
+      Session::forget('total');
 
       // Redirect to the order confirmation page
       DB::commit();
