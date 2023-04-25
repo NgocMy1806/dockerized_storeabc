@@ -16,7 +16,20 @@ class Order extends Model
         'transaction_id',
         'is_pickup',
         'payment_method',
+        'country_id',
+        'state_id',
+        'city_id',
+        'address_bottom',
     ];
+
+    // const PENDING='pending';
+    // const PROCESSING='processing';
+    // const COMPLETE='complete';
+    const PENDING='pending';
+    const PROCESSING='processing';
+    const COMPLETED='completed';
+
+
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');

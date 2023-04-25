@@ -184,7 +184,8 @@
 @endsection
 
 @push('custom-js')
-    <script>
+{{-- vì func add to cart dùng ở nhiều màn, cho nên mình đã viết luôn ở MH layout. Thực ra nên viết ở file header thì có vẻ sẽ hợp lí hơn --}}
+    {{-- <script>
         $(document).ready(function() {
             $('.add-to-cart').click(function(event) {
                 event.preventDefault();
@@ -215,5 +216,5 @@
                 });
             });
         });
-    </script>
+    </script> --}}
 @endpush

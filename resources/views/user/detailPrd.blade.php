@@ -56,7 +56,7 @@
                     <div class="clearfix"></div>
                 </div>
                 <a href="{{ route('AddToCart', $product->id) }}"
-                    class="btn btn-primary btn-normal btn-inline btn_form button item_add item_1" target="_self">Add to
+                    class="btn btn-primary btn-normal btn-inline btn_form button item_add item_1 add-to-cart" data-product-id="{{ $product->id }}"target="_self">Add to
                     cart</a>
             </div>
             <div class="clearfix"> </div>

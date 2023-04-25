@@ -100,7 +100,7 @@
                                                         <h4>{{ $product->name }}</h4>
 
                                                         <div class="price mount item_price">$ {{ $product->price }}</div>
-                                                    </a><a class="button item_add cbp-vm-icon cbp-vm-add" href="#">Add to cart</a>
+                                                    </a><a class="button item_add cbp-vm-icon cbp-vm-add add-to-cart" href="#" data-product-id="{{ $product->id }}">Add to cart</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -135,6 +135,7 @@
                 $.ajax({
                     url: url,
                     type: 'GET',
+                    dataType:'html', //server trả ra data là file view luôn, nghĩa là vẫn là server side rendering
                     success: function(response) {
                         $('.product-list').html(response);
                     },
@@ -145,64 +146,8 @@
             });
         });
 
-
-        // $(document).ready(function() {
-        //     $('.category-link').click(function(e) {
-        //         e.preventDefault();
-
-        //         var categoryId = $(this).data('category-id');
-        //         var url = "{{ route('listChildBags', ':categoryId') }}".replace(':categoryId', categoryId);
-
-
-        //         $('.category-link').removeClass('active');
-        //         $(this).addClass('active');
-
-        //         $.ajax({
-        //             url: url,
-        //             type: 'GET',
-        //             dataType: 'json',
-        //             success: function(response) {
-        //                 var productsHtml = '';
-
-        //                 $.each(response.products, function(index, product) {
-        //                     var productHtml =
-        //                         '<li class="simpleCart_shelfItem col-sm-4">' +
-        //                         '<div class="view view-first">' +
-
-        //                         '<a class="cbp-vm-image" href=\'{{ route('detailPrd', ':productId') }}\'.replace(":productId", product.id)></a>' +
-        //                         '<div class="inner_content clearfix">' +
-        //                         '<div class="product_image">' +
-        //                         '<div class="mask1">' +
-
-        //                         '<img src="{{ asset('storage/thumbnail') }}/'+product.thumbnail.name+'" alt="image" class="img-responsive zoom-img">' +
-
-        //                         '</div>' +
-        //                         '<div class="product_container">' +
-
-        //                         '<a class="cbp-vm-image" href="{{ route('detailPrd', ':productId') }}".replace(":productId", product.id)>'
-        //                         '<h4>' + product.name + '</h4>' +
-        //                         '<div class="price mount item_price">$ ' + product
-        //                         .price + '</div>' +
-        //                         '</a>' +
-        //                         '<a class="button item_add cbp-vm-icon cbp-vm-add" href="#">Add to cart</a>' +
-        //                         '</div>' +
-        //                         '</div>' +
-        //                         '</div>' +
-        //                         '</div>' +
-        //                         '</li>';
-
-        //                     productsHtml += productHtml;
-        //                 });
-
-        //                 $('.product-list').html(
-        //                     '<ul class="content-home cbp-vm-switcher" style="list-style: none; padding-top:5px">' +
-        //                     productsHtml + '</ul>');
-        //             },
-        //             error: function(xhr, status, error) {
-        //                 console.log(xhr.responseText);
-        //             }
-        //         });
-        //     });
-        // });
     </script>
+ 
+
+
 @endpush

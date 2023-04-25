@@ -5,12 +5,60 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Payment Successful</title>
-  </head>
-  <body>
-    <h1>Payment Successful</h1>
-    <p>Thank you for your purchase. Your payment has been successfully processed.</p>
-   <a href={{route('index')}}> Back to toppage </a>
-  </body>
+
+<head>
+    <title>Ordered Successfully</title>
+</head>
+
+<body>
+  {{session()->get('payment_method') }}
+    @if (session()->get('payment_method') === 'stripe')
+        <div class="alert-success">
+            <h1>Payment Successful</h1>
+            <p>Thank you for your purchase. Your payment has been successfully processed.</p>
+        </div>
+    @elseif (session()->get('payment_method') === 'bank')
+        <div class="alert-success">
+            <h1>Plese process bank transfer to complete order</h1>
+            <div class="container" style="display:flex">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h2>Bank Transfer Information</h2>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>Bank Account Name:</td>
+                                <td>store Wab</td>
+                            </tr>
+                            <tr>
+                                <td>Bank Number:</td>
+                                <td>012346868686</td>
+                            </tr>
+                            <tr>
+                                <td>Bank Name:</td>
+                                <td>HSBC</td>
+                            </tr>
+                            <tr>
+                                <td>Transfer Content:</td>
+                                <td>Order AB123</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <h2>QR Code</h2>
+                        <img src="{{ asset('/user/images/icon-256x256.png') }}" alt="QR Code" width="165" height="165">
+                    </div>
+                </div>
+            </div>
+        </div>
+    @elseif( session()->get('payment_method')==='COD' )
+        <div class="alert-success">
+            <h1>Order Successful</h1>
+            <p>Your order will be deliverd in 3 days</p>
+        </div>
+    @endif
+
+    <a href={{ route('index') }}> Back to toppage </a>
+</body>
+
 </html>
+

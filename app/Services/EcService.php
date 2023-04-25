@@ -50,7 +50,7 @@ class EcService extends BaseService
         ->whereIn('products.category_id', function ($query) {
             $query->select('id')
                   ->from('categories')
-                  ->whereNotIn('parent_id',[0,1]);
+                  ->whereNotIn('parent_id',[0,2]);
         })
         ->with('thumbnail')->paginate(9);
 

@@ -2,7 +2,7 @@
 @section('content')
     <script src="https://js.stripe.com/v3/"></script>
     <div class="container">
-        <h1>Shopping Cart: ${{$total}}</h1>
+        <h1>Shopping Cart: ${{ $total }}</h1>
         @if (Session::has('cart'))
             <table class="table">
                 <thead>
@@ -26,7 +26,7 @@
                         </tr>
                     @endforeach
                 </tbody>
-                
+
             </table>
         @else
             <p>Your cart is empty</p>
@@ -70,12 +70,6 @@
                         required>
                         <option value="">-- Select State --</option>
                     </select>
-
-                    @error('state')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
                 </div>
             </div>
             <div class="form-group row">
@@ -91,71 +85,126 @@
 
                 <div class="col-sm-4">
                     <input id="address" type="text" class="form-control @error('address') is-invalid @enderror"
-                        name="address" value="{{ old('address') }}" required>
+                        name="address_bottom" value="{{ old('address') }}" required>
+                </div>
+
+                <label for="payment_method" class="col-sm-2 col-form-label text-md-right">Payment method</label>
+                <div class="col-md-9" name="payment_method" style="display:inline-block">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="payment_method" id="payment_method_stripe"
+                            value="stripe" checked>
+                        <label class="form-check-label" for="payment_method_stripe">
+                            Stripe
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="payment_method" id="payment_method_bank"
+                            value="bank_transfer">
+                        <label class="form-check-label" for="payment_method_bank">
+                            Bank transfer
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="payment_method" id="payment_method_cod"
+                            value="2">
+                        <label class="form-check-label" for="payment_method_cod">
+                            Ship COD
+                        </label>
+                    </div>
                 </div>
             </div>
-    
-    <button type="submit"class="btn btn-primary" id="checkout-button">Checkout</button>
-    </form>
-    </section>
-@endsection
-@push('custom-js')
-    <script>
-        $(document).ready(function() {
-            $('#country').on('change', function() {
-                var country_id = $(this).val();
-                var url = "{{ route('getStates', ':id') }}".replace(':id', country_id);
-                if (country_id) {
-                    $.ajax({
-                        url: url,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            var states = data.states;
-                            var $stateSelect = $('#state');
 
-                            $stateSelect.empty();
-                            $stateSelect.append('<option value="">Select State</option>');
+            <button type="submit"class="btn btn-primary" id="checkout-button">Checkout</button>
+        </form>
 
-                            $.each(states, function(index, state) {
-                                $stateSelect.append('<option value="' + state.id +
-                                    '">' + state.state_name + '</option>');
-                            });
-                        }
-                    });
-                } else {
-                    $('#state').empty();
-                    $('#state').append('<option value="">Select a state</option>');
-                }
+        <div class="container" style="display:flex">
+            <div class="row">
+                <div class="col-md-8">
+                    <h2>Bank Transfer Information</h2>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>Bank Account Name:</td>
+                            <td>store Wab</td>
+                        </tr>
+                        <tr>
+                            <td>Bank Number:</td>
+                            <td>012346868686</td>
+                        </tr>
+                        <tr>
+                            <td>Bank Name:</td>
+                            <td>HSBC</td>
+                        </tr>
+                        <tr>
+                            <td>Transfer Content:</td>
+                            <td>Order AB123</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-4">
+                    <h2>QR Code</h2>
+                    <img src="{{ asset('/user/images/icon-256x256.png') }}" alt="QR Code" width="165" height="165">
+                </div>
+            </div>
+        </div>
+        </section>
+    @endsection
+    @push('custom-js')
+        <script>
+            $(document).ready(function() {
+                $('#country').on('change', function() {
+                    var country_id = $(this).val();
+                    var url = "{{ route('getStates', ':id') }}".replace(':id', country_id);
+                    if (country_id) {
+                        $.ajax({
+                            url: url,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                var states = data.states;
+                                var $stateSelect = $('#state');
+
+                                $stateSelect.empty();
+                                $stateSelect.append('<option value="">Select State</option>');
+
+                                $.each(states, function(index, state) {
+                                    $stateSelect.append('<option value="' + state.id +
+                                        '">' + state.state_name + '</option>');
+                                });
+                            }
+                        });
+                    } else {
+                        $('#state').empty();
+                        $('#state').append('<option value="">Select a state</option>');
+                    }
+                });
+                $('#state').on('change', function() {
+                    var state_id = $(this).val();
+                    console.log(state_id);
+                    var url = "{{ route('getCities', ':id') }}".replace(':id', state_id);
+                    if (state_id) {
+                        $.ajax({
+                            url: url,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                var cities = data.cities;
+                                console.log(cities);
+                                var $citySelect = $('#city');
+
+                                $citySelect.empty();
+                                $citySelect.append('<option value="">Select City</option>');
+
+                                $.each(cities, function(index, city) {
+                                    $citySelect.append('<option value="' + city.id +
+                                        '">' + city.city_name + '</option>');
+                                });
+                            }
+                        });
+                    } else {
+                        $('#city').empty();
+                        $('#city').append('<option value="">Select a city</option>');
+                    }
+                });
             });
-            $('#state').on('change', function() {
-                var state_id = $(this).val();
-                console.log(state_id);
-                var url = "{{ route('getCities', ':id') }}".replace(':id', state_id);
-                if (state_id) {
-                    $.ajax({
-                        url: url,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            var cities = data.cities;
-                            console.log(cities);
-                            var $citySelect = $('#city');
-
-                            $citySelect.empty();
-                            $citySelect.append('<option value="">Select City</option>');
-
-                            $.each(cities, function(index, city) {
-                                $citySelect.append('<option value="' + city.id +
-                                    '">' + city.city_name + '</option>');
-                            });
-                        }
-                    });
-                } else {
-                    $('#city').empty();
-                    $('#city').append('<option value="">Select a city</option>');
-                }
-            });
-        });
-    </script>
-@endpush
+        </script>
+    @endpush

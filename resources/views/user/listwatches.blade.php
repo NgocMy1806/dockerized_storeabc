@@ -100,7 +100,7 @@
                                                         <h4>{{ $product->name }}</h4>
 
                                                         <div class="price mount item_price">$ {{ $product->price }}</div>
-                                                    </a><a class="button item_add cbp-vm-icon cbp-vm-add" href="#">Add to cart</a>
+                                                    </a><a class="button item_add cbp-vm-icon cbp-vm-add add-to-cart" data-product-id="{{ $product->id }}"href="#">Add to cart</a>
                                                 </div>
                                             </div>
                                         </div>
