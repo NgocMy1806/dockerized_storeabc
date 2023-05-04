@@ -44,26 +44,69 @@ class EcService extends BaseService
 
    
 
-    public function getListBags(){
-        return Product::select('products.*')
+    public function getListBags($request){
+        $query =  Product::select('products.*')
         ->join('categories', 'products.category_id', '=', 'categories.id')
         ->whereIn('products.category_id', function ($query) {
             $query->select('id')
                   ->from('categories')
                   ->whereNotIn('parent_id',[0,2]);
         })
-        ->with('thumbnail')->paginate(9);
-
+        ->with('thumbnail');
+        
+        $priceRanges = [
+            '0-300' => [0, 300],
+            '300-600' => [300, 600],
+            '600+' => [600, null],
+        ];
+        
+        $bags_count = [];
+        
+        foreach ($priceRanges as $key => $range) {
+            $countQuery = clone $query; // phải clone vì nếu dùng nguyên query thì sẽ làm thay đổi giá trị của query, ảnh hưởng đến xử lí bên dưới
+            if ($range[1]) {
+                $countQuery->whereBetween('price', $range);
+            } else {
+                $countQuery->where('price', '>=', $range[0]);
+            }
+            $count = $countQuery->count();
+            $bags_count[$key] = $count;
+        }
+        
+        if ($request->sort_key == 'az') {
+            $query->orderBy('name', 'ASC');
+        }
+        if ($request->sort_key == 'za') {
+            $query->orderBy('name', 'DESC');
+        }
+        if ($request->sort_key == 'price_up') {
+            $query->orderBy('price', 'ASC');
+        }
+        if ($request->sort_key == 'price_down') {
+            $query->orderBy('price', 'DESC');
+        }
+        if ($request->has('price_range')) {
+            $price_range = explode('-', $request->price_range);
+            // dd($price_range, count($price_range));
+            if ($price_range[1] == '') {
+                $query->where('price', '>=', $price_range[0]);
+            } else {
+                $query->whereBetween('price', [$price_range[0], $price_range[1]]);
+            }
+        }
+        //  return $query->paginate(10);
+        $result = [
+            'products' => $query->paginate(9),
+            'bags_count' => $bags_count,
+        ];
+        return $result;
     }
 
     public function getListPrdOfChildCategory($category){
         return Product::where('category_id',$category)->with('thumbnail')->paginate(9);
     }
 
-    // public function countBags($category){
-    //     $count = Product::where('category_id', $category)->count();
-    //     return $count;
-    // }
+   
 
     public function getImages($request)
     {

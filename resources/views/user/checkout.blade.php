@@ -117,7 +117,7 @@
             <button type="submit"class="btn btn-primary" id="checkout-button">Checkout</button>
         </form>
 
-        <div class="container" style="display:flex">
+        {{-- <div class="container" style="display:flex">
             <div class="row">
                 <div class="col-md-8">
                     <h2>Bank Transfer Information</h2>
@@ -145,7 +145,7 @@
                     <img src="{{ asset('/user/images/icon-256x256.png') }}" alt="QR Code" width="165" height="165">
                 </div>
             </div>
-        </div>
+        </div> --}}
         </section>
     @endsection
     @push('custom-js')

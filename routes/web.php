@@ -41,6 +41,8 @@ Route::get('/success',  [StripePaymentController::class, 'checkoutOK'])->name('c
 
 Route::get('/bags', [EcController::class, 'getListBags'])->name('listBags');
 Route::get('/bags/{id}', [EcController::class, 'getListBagsOfChildCategory'])->name('listChildBags');
+// Route::get('/bags/price/{price_range}', [EcController::class, 'getProductsByPriceRange'])
+//     ->name('listBagsByPriceRange');
 
 Route::get('/watches', [EcController::class, 'getListWatches'])->name('listWatches');
 Route::get('/watches/{id}', [EcController::class, 'getListWatchesOfChildCategory'])->name('listChildWatches');

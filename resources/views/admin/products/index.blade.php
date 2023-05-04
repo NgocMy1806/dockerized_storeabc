@@ -101,10 +101,10 @@
                                                 <td>
                                                     @if ($product->thumbnail)
                                                         <img
-                                                            class="img-thumbnail"src="{{ asset('storage/thumbnail/' . $product->thumbnail->name) }}">
+                                                            class="img-thumbnail" width="200" height="150"src="{{ asset('storage/thumbnail/' . $product->thumbnail->name) }}">
                                                     @else
                                                         <img
-                                                            class="img-thumbnail"src="{{ asset('img/default/thumbnail-default.jpg') }}">
+                                                            class="img-thumbnail" width="250" height="250"src="{{ asset('img/default/thumbnail-default.jpg') }}">
                                                     @endif
                                                 </td>
                                                 <td>{{ number_format($product->stock) }}</td>

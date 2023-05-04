@@ -53,16 +53,21 @@ class EcController extends Controller
         );
     }
 
-    public function getListBags()
+    public function getListBags(Request $request)
     {
-        $products = $this->ecService->getListBags();
-
+        $result = $this->ecService->getListBags($request);
+        $products = $result['products'];
+        $bags_count = $result['bags_count'];
+        // $products = $this->ecService->getListBags($request);
         return view(
             'user.listbags',
             [
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
-                'products' => $products
+                'products' => $products,
+                'sort_key' => $request->sort_key?$request->sort_key:null,
+                'price_range' => $request->price_range?$request->price_range:null,
+              'bags_count'=>$bags_count
             ]
         );
     }

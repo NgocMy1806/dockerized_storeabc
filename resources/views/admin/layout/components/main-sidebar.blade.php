@@ -39,6 +39,14 @@
             </a>
           </li>
           <li class="nav-item has-treeview menu-open">
+            <a href="{{route('orders.index')}}" class="nav-link @if(Route::is('orders.*')) active @endif">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Orders
+              </p>
+            </a>
+          </li>
+          <li class="nav-item has-treeview menu-open">
             <a href="{{route('admin.logout')}}" class="nav-link">
               <i class="nav-icon fas fa-sign-out-alt"></i> 
               <p>

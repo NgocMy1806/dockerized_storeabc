@@ -37,6 +37,18 @@ class Order extends Model
 
     public function orderDetails()
     {
-        return $this->hasMany(OrderDetail::class, 'order_id');
+        return $this->hasMany(OrderDetail::class);
+    }
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
+    public function state()
+    {
+        return $this->belongsTo(State::class);
+    }
+    public function city()
+    {
+        return $this->belongsTo(City::class);
     }
 }

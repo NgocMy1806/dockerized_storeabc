@@ -16,7 +16,30 @@ class OrderService extends BaseService
 
 {
 public function getOrders(){
-    return Order::with('customer')->get();
+    
+    return Order::with('customer')->paginate(10);
+}
+
+public function getOrderDetail($id)
+{
+    return $order = Order::with('orderDetails')->find($id);
+  
+}
+
+
+public function changePaymentStatus($id, $payment_status){
+    $order= Order::find($id);
+    $order->update([
+        'payment_status'=> $payment_status
+    ]);
+    return true;
+}
+public function changeOrderStatus($id, $order_status){
+    $order= Order::find($id);
+    $order->update([
+        'order_status'=> $order_status
+    ]);
+    return true;
 }
 
 }

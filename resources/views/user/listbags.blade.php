@@ -4,34 +4,28 @@
     <div class="col-md-4 sidebar_men">
         <h3>Categories</h3>
         <ul class="product-categories color sidebar">
-          @foreach ($bagCategories as $bagCategory)
-          <li class="cat-item cat-item-60"><a href="{{route('listChildBags', $bagCategory->id)}}" class="category-link" data-category-id="{{ $bagCategory->id }}">{{$bagCategory->name}}</a> <span class="count">({{ $bagCategory->products_count }})</span></li>
-          @endforeach
-       </ul>
+            @foreach ($bagCategories as $bagCategory)
+                <li class="cat-item cat-item-60"><a href="{{ route('listChildBags', $bagCategory->id) }}" class="category-link"
+                        data-category-id="{{ $bagCategory->id }}">{{ $bagCategory->name }}</a> <span
+                        class="count">({{ $bagCategory->products_count }})</span></li>
+            @endforeach
+        </ul>
         <h3>Colors</h3>
-        <ul class="product-categories color"><li class="cat-item cat-item-42"><a href="#">Green</a> <span class="count">(14)</span></li>
-          <li class="cat-item cat-item-60"><a href="#">Blue</a> <span class="count">(2)</span></li>
-          <li class="cat-item cat-item-63"><a href="#">Red</a> <span class="count">(2)</span></li>
-          <li class="cat-item cat-item-54"><a href="#">Gray</a> <span class="count">(8)</span></li>
-          <li class="cat-item cat-item-55"><a href="#">Green</a> <span class="count">(11)</span></li>
+        <ul class="product-categories color">
+            <li class="cat-item cat-item-42"><a href="#">Green</a> <span class="count">(14)</span></li>
+            <li class="cat-item cat-item-60"><a href="#">Blue</a> <span class="count">(2)</span></li>
+            <li class="cat-item cat-item-63"><a href="#">Red</a> <span class="count">(2)</span></li>
+            <li class="cat-item cat-item-54"><a href="#">Gray</a> <span class="count">(8)</span></li>
+            <li class="cat-item cat-item-55"><a href="#">Green</a> <span class="count">(11)</span></li>
         </ul>
-        <h3>Sizes</h3>
-        <ul class="product-categories color"><li class="cat-item cat-item-42"><a href="#">L</a> <span class="count">(14)</span></li>
-          <li class="cat-item cat-item-60"><a href="#">M</a> <span class="count">(2)</span></li>
-          <li class="cat-item cat-item-63"><a href="#">S</a> <span class="count">(2)</span></li>
-          <li class="cat-item cat-item-54"><a href="#">XL</a> <span class="count">(8)</span></li>
-          <li class="cat-item cat-item-55"><a href="#">XS</a> <span class="count">(11)</span></li>
-        </ul>
+        
         <h3>Price</h3>
         <ul class="product-categories">
-          <li class="cat-item cat-item-42"><a href="#">0$-200$</a> <span class="count">(14)</span></li>
-          <li class="cat-item cat-item-42"><a href="#">200$-400$</a> <span class="count">(14)</span></li>
-          <li class="cat-item cat-item-60"><a href="#">400$-600$</a> <span class="count">(2)</span></li>
-          <li class="cat-item cat-item-63"><a href="#">600$-800$</a> <span class="count">(2)</span></li>
-          <li class="cat-item cat-item-54"><a href="#">800$~</a> <span class="count">(8)</span></li>
-        
+            <li class="cat-item cat-item-42"><a href="{{ route('listBags', ['price_range' => '0-300']) }}">0$-300$</a> <span class="count">({{$bags_count['0-300']}})</span></li>
+            <li class="cat-item cat-item-42"><a href="{{ route('listBags', ['price_range' => '300-600']) }}">300$-600$</a> <span class="count">({{$bags_count['300-600']}})</span></li>
+            <li class="cat-item cat-item-54"><a href="{{ route('listBags', ['price_range' => '600-']) }}">600$~</a> <span class="count">({{$bags_count['600+']}})</span></li>
         </ul>
-      </div>
+    </div>
     <div class="col-md-8 mens_right">
         <div class="dreamcrub">
             <ul class="breadcrumbs">
@@ -43,24 +37,33 @@
                     Bags&nbsp;
                 </li>
             </ul>
-            
+
             <div class="clearfix"></div>
         </div>
         <div class="mens-toolbar">
-            <div class="sort">
-                <div class="sort-by">
-                    <label>Sort By</label>
-                    <select>
-                        <option value="">
-                            Position </option>
-                        <option value="">
-                            Name </option>
-                        <option value="">
-                            Price </option>
-                    </select>
-                    <a href=""><img src="images/arrow2.gif" alt="" class="v-middle"></a>
+            <form action="{{ route('listBags') }}" method="get" id="form-filter">
+                <div class="sort">
+                    <div class="sort-by">
+                        <label>Sort By</label>
+                        <select name="sort_key" class="product-filter">
+                            <option value="az" @if ($sort_key == 'az') selected @endif>
+                                A->Z
+                            </option>
+                            <option value="za" @if ($sort_key == 'za') selected @endif>
+                                Z->A
+                            </option>
+                            <option value="price_up" @if ($sort_key == 'price_up') selected @endif>
+                                Price up
+                            </option>
+                            <option value="price_down" @if ($sort_key == 'price_down') selected @endif>
+                                Price down
+                            </option>
+                        </select>
+                        <a href=""><img src="images/arrow2.gif" alt="" class="v-middle"></a>
+                    </div>
                 </div>
-            </div>
+            </form>
+
             {{-- <ul class="women_pagenation dc_paginationA dc_paginationA06">
                 <li><a href="#" class="previous">Page : </a></li>
                 @if ($prds->lastPage > 1)
@@ -74,7 +77,7 @@
                <li class="next"><a href="{{$prd->getNextPage()}}">Next</a></li>
                <li class="next"><a href="{{route('category',['page'=>$prd->currentPage()+1]}}">Next</a></li> 
             </ul> --}}
-           
+
             <div class="clearfix"></div>
         </div>
         <div id="cbp-vm" class="cbp-vm-switcher cbp-vm-view-grid">
@@ -100,7 +103,9 @@
                                                         <h4>{{ $product->name }}</h4>
 
                                                         <div class="price mount item_price">$ {{ $product->price }}</div>
-                                                    </a><a class="button item_add cbp-vm-icon cbp-vm-add add-to-cart" href="#" data-product-id="{{ $product->id }}">Add to cart</a>
+                                                    </a><a class="button item_add cbp-vm-icon cbp-vm-add add-to-cart"
+                                                        href="#" data-product-id="{{ $product->id }}">Add to
+                                                        cart</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -124,6 +129,16 @@
 @push('custom-js')
     <script src="{{ asset('user/js/cbpViewModeSwitch.js') }}" type="text/javascript"></script>
     <script src="{{ asset('user/js/classie.js') }}" type="text/javascript"></script>
+     {{-- js for sort function --}}
+     <script>
+        $(document).ready(function() {
+            $('.product-filter').on('change', function() {
+                console.log('hi');
+                $('#form-filter').submit();
+            });
+        });
+    </script>
+    
     <script>
         $(document).ready(function() {
             $('.category-link').click(function(e) {
@@ -135,7 +150,7 @@
                 $.ajax({
                     url: url,
                     type: 'GET',
-                    dataType:'html', //server trả ra data là file view luôn, nghĩa là vẫn là server side rendering
+                    dataType: 'html', //server trả ra data là file view luôn, nghĩa là vẫn là server side rendering
                     success: function(response) {
                         $('.product-list').html(response);
                     },
@@ -145,9 +160,7 @@
                 });
             });
         });
-
     </script>
- 
 
-
+   
 @endpush
