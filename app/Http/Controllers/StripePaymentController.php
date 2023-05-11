@@ -165,6 +165,7 @@ class StripePaymentController extends Controller
   public function checkoutBankTransfer(Request $request)
   {
     $paymentMethod = $request->input('payment_method');
+   // dd($paymentMethod);
     try {
       $cart = session()->get('cart', []);
       // dd ($cart);
@@ -211,6 +212,9 @@ class StripePaymentController extends Controller
       // Clear the cart in the session
       Session::forget('cart');
       Session::forget('total');
+
+        // Send the order confirmation email
+        Mail::to($customer->email)->send(new OrderSuccessMail($customer, $order));
 
       //session()->put('payment_method', 'bank');
       if ($paymentMethod == 'bank') {

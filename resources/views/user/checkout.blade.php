@@ -99,14 +99,14 @@
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="payment_method" id="payment_method_bank"
-                            value="bank_transfer">
+                            value="bank">
                         <label class="form-check-label" for="payment_method_bank">
                             Bank transfer
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="payment_method" id="payment_method_cod"
-                            value="2">
+                            value="COD">
                         <label class="form-check-label" for="payment_method_cod">
                             Ship COD
                         </label>

@@ -12,17 +12,28 @@ use Illuminate\Queue\SerializesModels;
 class OrderSuccessMail extends Mailable
 {
     use Queueable, SerializesModels;
-
+    private $customer;
+    private $order;
+    
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($customer, $order)
     {
-        //
+        $this->customer = $customer;
+        $this->order = $order;
     }
 
+    public function build()
+    {
+        return $this->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'))
+        ->subject('WABA_Order successfully')
+                   ->view('mail.orderSuccess')
+                   ->with('customer', $this->customer)
+                   ->with('order', $this->order);
+    }
     /**
      * Get the message envelope.
      *

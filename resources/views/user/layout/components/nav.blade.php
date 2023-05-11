@@ -1,6 +1,6 @@
 <div class="menu">
     <ul class="megamenu skyblue">
-        <li><a class="color2" href="{{route('listWatches')}}">Watches</a>
+        <li class="{{ Route::is('listWatches') || Route::is('listChildWatches') ?'active' : '' }}"><a class="color2 " href="{{route('listWatches')}}">Watches</a>
             <div class="megapanel">
                 <div class="row">
                     <div class="col1">
@@ -18,7 +18,8 @@
                 </div>
             </div>
         </li>
-        <li><a class="color4" href="{{route('listBags')}}">Bags</a>
+        <li class="{{ Route::is('listBags') || Route::is('listChildBags') ? 'active' : '' }}">
+            <a class="color4" href="{{ route('listBags') }}">Bags</a>
             <div class="megapanel">
                 <div class="row">
                     <div class="col1">
@@ -37,8 +38,8 @@
             </div>
         </li>
 
-        <li class="active grid"><a class="color3" href="index.html">Sale</a></li>
-        <li><a class="color7" href="404.html">News</a></li>
+        <li class=" grid"><a class="color3" href="index.html">Sale</a></li>
+        <li><a class="color7 " href="404.html">News</a></li>
         <div class="clearfix"> </div>
     </ul>
 </div>

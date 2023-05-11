@@ -59,32 +59,17 @@ class EcController extends Controller
         $products = $result['products'];
         $bags_count = $result['bags_count'];
         // $products = $this->ecService->getListBags($request);
-        return view(
-            'user.listbags',
-            [
-                'watchCategories' => $this->watchCategories,
-                'bagCategories' => $this->bagCategories,
-                'products' => $products,
-                'sort_key' => $request->sort_key?$request->sort_key:null,
-                'price_range' => $request->price_range?$request->price_range:null,
-              'bags_count'=>$bags_count
-            ]
-        );
-    }
-
-
-    public function getListBagsOfChildCategory($category, Request $request)
-    {
-        // dd($request->all());
-        $products = $this->ecService->getListPrdOfChildCategory($category);
-
         if ($request->ajax()) {
             return view(
                 'user.listPrdByCateAjax',
                 [
                     'watchCategories' => $this->watchCategories,
                     'bagCategories' => $this->bagCategories,
-                    'products' => $products
+                    'products' => $products,
+                    'sort_key' => $request->sort_key,
+                    'price_range' => $request->price_range,
+                    'bags_count' => $bags_count,
+                   
                 ]
             )->render();
         }
@@ -93,7 +78,45 @@ class EcController extends Controller
             [
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
-                'products' => $products
+                'products' => $products,
+                'sort_key' => $request->sort_key ? $request->sort_key : null,
+                'price_range' => $request->price_range ? $request->price_range : null,
+                'bags_count' => $bags_count
+            ]
+        );
+    }
+
+
+    public function getListBagsOfChildCategory($category, Request $request)
+    {
+        // dd($request->all());
+        $result = $this->ecService->getListPrdOfChildCategory($category, $request);
+        $products = $result['products'];
+        $bags_count = $result['bags_count'];
+        $active_category_id=$category;
+        if ($request->ajax()) {
+            return view(
+                'user.listPrdByCateAjax',
+                [
+                    'watchCategories' => $this->watchCategories,
+                    'bagCategories' => $this->bagCategories,
+                    'products' => $products,
+                    'sort_key' => $request->sort_key,
+                    'price_range' => $request->price_range,
+                    'bags_count' => $bags_count,
+                    'active_category_id' => $active_category_id, // Pass the active category ID to the view
+                ]
+            )->render();
+        }
+        return view(
+            'user.listbags',
+            [
+                'watchCategories' => $this->watchCategories,
+                'bagCategories' => $this->bagCategories,
+                'products' => $products,
+                'sort_key' => $request->sort_key ? $request->sort_key : null,
+                'price_range' => $request->price_range ? $request->price_range : null,
+                'bags_count' => $bags_count
             ]
         );
     }
@@ -116,7 +139,7 @@ class EcController extends Controller
     public function getListWatchesOfChildCategory($category, Request $request)
     {
         // dd($request->all());
-        $products = $this->ecService->getListPrdOfChildCategory($category);
+        $products = $this->ecService->getListPrdOfChildCategory($category, $request);
 
         if ($request->ajax()) {
             return view(

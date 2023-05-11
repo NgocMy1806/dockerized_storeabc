@@ -3,21 +3,13 @@
     {{-- @include('user.layout.components.sidebarfilter') --}}
     <div class="col-md-4 sidebar_men">
         <h3>Categories</h3>
-        <ul class=" product-categories color sidebar">
+        <ul class="product-categories color sidebar">
             @foreach ($bagCategories as $bagCategory)
-                <li
-                    class="cat-item cat-item-60 category_item {{ isset($active_category_id) && $bagCategory->id == $active_category_id ? 'active' : '' }}{{ Request::segment(2) == $bagCategory->id ? 'active' : '' }}">
-                    <a href="{{ route('listChildBags', $bagCategory->id) }}"
-                        class="category-link {{ isset($active_category_id) && $bagCategory->id == $active_category_id ? 'active' : '' }}"
-                        data-category-id="{{ $bagCategory->id }}">
-                        {{ $bagCategory->name }}
-                    </a>
-                    <span class="count">({{ $bagCategory->products_count }})</span>
-                </li>
+                <li class="cat-item cat-item-60"><a href="{{ route('listChildBags', $bagCategory->id) }}" class="category-link"
+                        data-category-id="{{ $bagCategory->id }}">{{ $bagCategory->name }}</a> <span
+                        class="count">({{ $bagCategory->products_count }})</span></li>
             @endforeach
-
         </ul>
-
         <h3>Colors</h3>
         <ul class="product-categories color">
             <li class="cat-item cat-item-42"><a href="#">Green</a> <span class="count">(14)</span></li>
@@ -26,16 +18,12 @@
             <li class="cat-item cat-item-54"><a href="#">Gray</a> <span class="count">(8)</span></li>
             <li class="cat-item cat-item-55"><a href="#">Green</a> <span class="count">(11)</span></li>
         </ul>
-
+        
         <h3>Price</h3>
-        <ul class="product-price  color sidebar product-categories">
-            <li class="cat-item cat-item-42"><a href="{{ route('listBags', ['price_range' => '0-300']) }}">0$-300$</a> <span
-                    class="count">({{ $bags_count['0-300'] }})</span></li>
-            <li class="cat-item cat-item-42"><a href="{{ route('listBags', ['price_range' => '300-600']) }}">300$-600$</a>
-                <span class="count">({{ $bags_count['300-600'] }})</span>
-            </li>
-            <li class="cat-item cat-item-54"><a href="{{ route('listBags', ['price_range' => '600-']) }}">600$~</a> <span
-                    class="count">({{ $bags_count['600+'] }})</span></li>
+        <ul class="product-price">
+            <li class="cat-item cat-item-42"><a href="{{ route('listBags', ['price_range' => '0-300']) }}">0$-300$</a> <span class="count">({{$bags_count['0-300']}})</span></li>
+            <li class="cat-item cat-item-42"><a href="{{ route('listBags', ['price_range' => '300-600']) }}">300$-600$</a> <span class="count">({{$bags_count['300-600']}})</span></li>
+            <li class="cat-item cat-item-54"><a href="{{ route('listBags', ['price_range' => '600-']) }}">600$~</a> <span class="count">({{$bags_count['600+']}})</span></li>
         </ul>
     </div>
     <div class="col-md-8 mens_right">
@@ -93,9 +81,8 @@
             <div class="clearfix"></div>
         </div>
         <div id="cbp-vm" class="cbp-vm-switcher cbp-vm-view-grid">
-            @if (isset($active_category_id))
-                {{ hi }}
-            @endif
+
+
             <div class="clearfix"></div>
             <div class="product-list">
                 <ul>
@@ -142,53 +129,76 @@
 @push('custom-js')
     <script src="{{ asset('user/js/cbpViewModeSwitch.js') }}" type="text/javascript"></script>
     <script src="{{ asset('user/js/classie.js') }}" type="text/javascript"></script>
-    {{-- js for sort function --}}
+     {{-- js for sort function --}}
+     <script>
+        // $(document).ready(function() {
+        //     $('.product-filter').on('change', function() {
+        //         console.log('hi');
+        //         $('#form-filter').submit();
+        //     });
+        // });
+
+
+        $(document).ready(function() {
+    $('.product-filter').on('change', function() {
+        var categoryId = getCategoryIdFromURL()?getCategoryIdFromURL():''; // Retrieve the category ID from the URL
+        var sortKey = $(this).val(); // Get the selected sort key
+        var url = "{{ url('bags') }}/" + categoryId + "?sort_key=" + sortKey;
+        console.log(categoryId);
+        console.log(url);
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'html',
+            success: function(response) {
+                $('.product-list').html(response);
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+       
+        });
+    });
+
+    function getCategoryIdFromURL() {
+    var url = window.location.href;
+    var categoryId = null;
+    var parts = url.split('/');
+    var lastIndex = parts.length - 1;
+    if (lastIndex > 0 && parts[lastIndex] !== 'bags') {
+        categoryId = parts[lastIndex];
+    }
+    return categoryId;
+}
+        })
+;
+
+    </script>
+    
     <script>
         $(document).ready(function() {
-
-            var activeCategoryId = $('.category-link.active').data('category-id');
-
             $('.category-link').click(function(e) {
                 e.preventDefault();
-
                 var categoryId = $(this).data('category-id');
-                var sortKey = $('.product-filter').val();
+                // var url = "{{ route('listChildBags', ':categoryId') }}".replace(':categoryId', categoryId);
                 var url = "{{ url('bags') }}/" + categoryId;
-
-                // Add the active class to the clicked category link
-                $('.category-link').removeClass('active');
-                $(this).addClass('active');
-
-                // Perform the AJAX request
-                performAjaxRequest(url, sortKey);
-            });
-
-
-            $('.product-filter').on('change', function() {
-                var categoryId = $('.category-link.active').data('category-id');
+                window.location.href = url;
                 console.log(categoryId);
-                var sortKey = $(this).val();
-                var url = "{{ url('bags') }}/" + (categoryId ? categoryId : '');
-                performAjaxRequest(url, sortKey);
+                console.log(url);
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'html', //server trả ra data là file view luôn, nghĩa là vẫn là server side rendering
+                    success: function(response) {
+                        $('.product-list').html(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
             });
-
         });
-
-        function performAjaxRequest(url, sortKey) {
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'html',
-                data: {
-                    sort_key: sortKey
-                },
-                success: function(response) {
-                    $('.product-list').html(response);
-                },
-                error: function(xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        }
     </script>
+
+   
 @endpush

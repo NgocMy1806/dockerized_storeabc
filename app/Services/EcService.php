@@ -102,8 +102,53 @@ class EcService extends BaseService
         return $result;
     }
 
-    public function getListPrdOfChildCategory($category){
-        return Product::where('category_id',$category)->with('thumbnail')->paginate(9);
+    public function getListPrdOfChildCategory($category, $request){
+        $query= Product::where('category_id',$category)->with('thumbnail');
+        $priceRanges = [
+            '0-300' => [0, 300],
+            '300-600' => [300, 600],
+            '600+' => [600, null],
+        ];
+        
+        $bags_count = [];
+        
+        foreach ($priceRanges as $key => $range) {
+            $countQuery = clone $query; 
+            if ($range[1]) {
+                $countQuery->whereBetween('price', $range);
+            } else {
+                $countQuery->where('price', '>=', $range[0]);
+            }
+            $count = $countQuery->count();
+            $bags_count[$key] = $count;
+        }
+        if ($request->sort_key == 'az') {
+            $query->orderBy('name', 'ASC');
+        }
+        if ($request->sort_key == 'za') {
+            $query->orderBy('name', 'DESC');
+        }
+        if ($request->sort_key == 'price_up') {
+            $query->orderBy('price', 'ASC');
+        }
+        if ($request->sort_key == 'price_down') {
+            $query->orderBy('price', 'DESC');
+        }
+        if ($request->has('price_range')) {
+            $price_range = explode('-', $request->price_range);
+        
+            if ($price_range[1] == '') {
+                $query->where('price', '>=', $price_range[0]);
+            } else {
+                $query->whereBetween('price', [$price_range[0], $price_range[1]]);
+            }
+        }
+      
+        $result = [
+            'products' => $query->paginate(9),
+            'bags_count' => $bags_count,
+        ];
+        return $result;
     }
 
    
