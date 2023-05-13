@@ -162,15 +162,23 @@
         var sortKey = $('.product-filter').val();
         var priceRange = $('.price-link.active').data('price-range');
         var url = "{{ url('bags') }}/" + categoryId;
-
-        // Add the active class to the clicked category link
-        $('.category-link').removeClass('active');
-        $(this).addClass('active');
-
-        // Perform the AJAX request
+        var url2 = "{{ url('bags') }}";
+        $('.category-link').not(this).removeClass('active');
+        $(this).toggleClass('active');
+    
+        
+    // Check if the filter is active or not
+    if ($(this).hasClass('active')) {
+        // Perform the AJAX request with the price range
         performAjaxRequest(url, sortKey, priceRange);
+    } else {
+        // Perform the AJAX request without the price range
+        performAjaxRequest(url2, sortKey, priceRange);
+    }
+        
     });
 
+    //this is sortkey
     $('.product-filter').on('change', function() {
         var categoryId = $('.category-link.active').data('category-id');
         var sortKey = $(this).val();
@@ -179,23 +187,32 @@
         performAjaxRequest(url, sortKey, priceRange);
     });
 
+   
+
+
     $('.price-link').click(function(e) {
-        e.preventDefault();
+    e.preventDefault();
 
-        var priceRange = $(this).data('price-range');
-        console.log(priceRange);
-        var sortKey = $('.product-filter').val();
-        var categoryId = $('.category-link.active').data('category-id');
-        var url = "{{ url('bags') }}/" + (categoryId ? categoryId : '');
-        console.log(url);
+    var priceRange = $(this).data('price-range');
+    console.log(priceRange);
+    var sortKey = $('.product-filter').val();
+    var categoryId = $('.category-link.active').data('category-id');
+    var url = "{{ url('bags') }}/" + (categoryId ? categoryId : '');
+    console.log(url);
 
-        // Add the active class to the clicked price link
-        $('.price-link').removeClass('active');
-        $(this).addClass('active');
+    $('.price-link').not(this).removeClass('active');
+    $(this).toggleClass('active');
 
-        // Perform the AJAX request
+
+    // Check if the filter is active or not
+    if ($(this).hasClass('active')) {
+        // Perform the AJAX request with the price range
         performAjaxRequest(url, sortKey, priceRange);
-    });
+    } else {
+        // Perform the AJAX request without the price range
+        performAjaxRequest(url, sortKey);
+    }
+});
 });
 
 function performAjaxRequest(url, sortKey, priceRange) {
