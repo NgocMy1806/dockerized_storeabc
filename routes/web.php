@@ -52,3 +52,5 @@ Route::get('/{id}', [EcController::class, 'getDetailPrd'])->name('detailPrd');
 Route::post('/addtocart/{id}', [EcController::class, 'AddToCart'])->name('AddToCart');
 Route::delete('/cart/{id}', [EcController::class, 'removeFromCart'])->name('removeFromCart');
 Route::delete('/cart', [EcController::class, 'EmptyCart'])->name('EmptyCart');
+
+Route::get('/search/{keyword}', [EcController::class, 'search'])->name('search');

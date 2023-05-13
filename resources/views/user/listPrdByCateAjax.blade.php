@@ -33,6 +33,8 @@
                 <div style="float: right">
                     {{ $products->links() }}
                 </div>
-            @endif
+                @else
+                <h3>data not found</h3>
+                @endif
         </ul>
     </div>

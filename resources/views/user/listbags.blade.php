@@ -28,15 +28,21 @@
         </ul>
 
         <h3>Price</h3>
-        <ul class="product-price  color sidebar product-categories">
-            <li class="cat-item cat-item-42"><a href="{{ route('listBags', ['price_range' => '0-300']) }}">0$-300$</a> <span
-                    class="count">({{ $bags_count['0-300'] }})</span></li>
-            <li class="cat-item cat-item-42"><a href="{{ route('listBags', ['price_range' => '300-600']) }}">300$-600$</a>
+        <ul class="product-price color sidebar product-categories">
+            <li class="cat-item cat-item-42">
+                <a href="{{ route('listBags', ['price_range' => '0-300']) }}" class="price-link" data-price-range="0-300">0$-300$</a>
+                <span class="count">({{ $bags_count['0-300'] }})</span>
+            </li>
+            <li class="cat-item cat-item-42">
+                <a href="{{ route('listBags', ['price_range' => '300-600']) }}" class="price-link" data-price-range="300-600">300$-600$</a>
                 <span class="count">({{ $bags_count['300-600'] }})</span>
             </li>
-            <li class="cat-item cat-item-54"><a href="{{ route('listBags', ['price_range' => '600-']) }}">600$~</a> <span
-                    class="count">({{ $bags_count['600+'] }})</span></li>
+            <li class="cat-item cat-item-54">
+                <a href="{{ route('listBags', ['price_range' => '600-']) }}" class="price-link" data-price-range="600-">600$~</a>
+                <span class="count">({{ $bags_count['600+'] }})</span>
+            </li>
         </ul>
+
     </div>
     <div class="col-md-8 mens_right">
         <div class="dreamcrub">
@@ -93,9 +99,9 @@
             <div class="clearfix"></div>
         </div>
         <div id="cbp-vm" class="cbp-vm-switcher cbp-vm-view-grid">
-            @if (isset($active_category_id))
+            {{-- @if (isset($active_category_id))
                 {{ hi }}
-            @endif
+            @endif --}}
             <div class="clearfix"></div>
             <div class="product-list">
                 <ul>
@@ -130,6 +136,8 @@
                         <div style="float: right">
                             {{ $products->links() }}
                         </div>
+                    @else
+                    <h3>data not found </h3>
                     @endif
                 </ul>
             </div>
@@ -145,50 +153,68 @@
     {{-- js for sort function --}}
     <script>
         $(document).ready(function() {
+    var activeCategoryId = $('.category-link.active').data('category-id');
 
-            var activeCategoryId = $('.category-link.active').data('category-id');
+    $('.category-link').click(function(e) {
+        e.preventDefault();
 
-            $('.category-link').click(function(e) {
-                e.preventDefault();
+        var categoryId = $(this).data('category-id');
+        var sortKey = $('.product-filter').val();
+        var priceRange = $('.price-link.active').data('price-range');
+        var url = "{{ url('bags') }}/" + categoryId;
 
-                var categoryId = $(this).data('category-id');
-                var sortKey = $('.product-filter').val();
-                var url = "{{ url('bags') }}/" + categoryId;
+        // Add the active class to the clicked category link
+        $('.category-link').removeClass('active');
+        $(this).addClass('active');
 
-                // Add the active class to the clicked category link
-                $('.category-link').removeClass('active');
-                $(this).addClass('active');
+        // Perform the AJAX request
+        performAjaxRequest(url, sortKey, priceRange);
+    });
 
-                // Perform the AJAX request
-                performAjaxRequest(url, sortKey);
-            });
+    $('.product-filter').on('change', function() {
+        var categoryId = $('.category-link.active').data('category-id');
+        var sortKey = $(this).val();
+        var priceRange = $('.price-link.active').data('price-range');
+        var url = "{{ url('bags') }}/" + (categoryId ? categoryId : '');
+        performAjaxRequest(url, sortKey, priceRange);
+    });
 
+    $('.price-link').click(function(e) {
+        e.preventDefault();
 
-            $('.product-filter').on('change', function() {
-                var categoryId = $('.category-link.active').data('category-id');
-                console.log(categoryId);
-                var sortKey = $(this).val();
-                var url = "{{ url('bags') }}/" + (categoryId ? categoryId : '');
-                performAjaxRequest(url, sortKey);
-            });
+        var priceRange = $(this).data('price-range');
+        console.log(priceRange);
+        var sortKey = $('.product-filter').val();
+        var categoryId = $('.category-link.active').data('category-id');
+        var url = "{{ url('bags') }}/" + (categoryId ? categoryId : '');
+        console.log(url);
 
-        });
+        // Add the active class to the clicked price link
+        $('.price-link').removeClass('active');
+        $(this).addClass('active');
 
-        function performAjaxRequest(url, sortKey) {
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'html',
-                data: {
-                    sort_key: sortKey
-                },
-                success: function(response) {
-                    $('.product-list').html(response);
-                },
-                error: function(xhr, status, error) {
-                    console.log(error);
-                }
-            });
+        // Perform the AJAX request
+        performAjaxRequest(url, sortKey, priceRange);
+    });
+});
+
+function performAjaxRequest(url, sortKey, priceRange) {
+    $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'html',
+        data: {
+            sort_key: sortKey,
+            price_range: priceRange
+        },
+        success: function(response) {
+            $('.product-list').html(response);
+        },
+        error: function(xhr, status, error) {
+            console.log(error);
         }
+    });
+}
+
     </script>
 @endpush

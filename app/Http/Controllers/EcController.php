@@ -86,40 +86,36 @@ class EcController extends Controller
         );
     }
 
-
     public function getListBagsOfChildCategory($category, Request $request)
     {
-        // dd($request->all());
         $result = $this->ecService->getListPrdOfChildCategory($category, $request);
         $products = $result['products'];
         $bags_count = $result['bags_count'];
-        $active_category_id=$category;
+        $active_category_id = $category;
+    
         if ($request->ajax()) {
-            return view(
-                'user.listPrdByCateAjax',
-                [
-                    'watchCategories' => $this->watchCategories,
-                    'bagCategories' => $this->bagCategories,
-                    'products' => $products,
-                    'sort_key' => $request->sort_key,
-                    'price_range' => $request->price_range,
-                    'bags_count' => $bags_count,
-                    'active_category_id' => $active_category_id, // Pass the active category ID to the view
-                ]
-            )->render();
-        }
-        return view(
-            'user.listbags',
-            [
+            return view('user.listPrdByCateAjax', [
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
                 'products' => $products,
-                'sort_key' => $request->sort_key ? $request->sort_key : null,
-                'price_range' => $request->price_range ? $request->price_range : null,
-                'bags_count' => $bags_count
-            ]
-        );
+                'sort_key' => $request->sort_key,
+                'price_range' => $request->price_range,
+                'bags_count' => $bags_count,
+                'active_category_id' => $active_category_id, 
+            ])->render();
+        }
+    
+        return view('user.listbags', [
+            'watchCategories' => $this->watchCategories,
+            'bagCategories' => $this->bagCategories,
+            'products' => $products,
+            'sort_key' => $request->sort_key ? $request->sort_key : null,
+            'price_range' => $request->price_range ? $request->price_range : null,
+            'bags_count' => $bags_count,
+            'active_category_id' => $active_category_id, 
+        ]);
     }
+    
 
     public function getListWatches()
     {
@@ -301,4 +297,18 @@ class EcController extends Controller
         $cities = City::where('state_id', $id)->get();
         return response()->json(['cities' => $cities]);
     }
+
+    // public function search ($keyword)
+    // {
+
+    //     return view('user.searchResult',
+    //     [
+    //         'watchCategories' => $this->watchCategories,
+    //         'bagCategories' => $this->bagCategories,
+    //         'products' => $products,
+    //         'keyword' => $keyword,
+    //         'countResult' => $countResult
+    //     ]);
+    // }
+
 }
