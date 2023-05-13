@@ -158,4 +158,18 @@ class EcService extends BaseService
         $images = Media::where([['mediable_id', $request], ['mediable_type', 'App\Models\Product'], ['type', 'product_image']])->get();
         return $images;
     }
+
+    public function search($keyword)
+    {
+        $products = Product::where('name', 'like', '%' . $keyword . '%')->with('thumbnail')->paginate(9);
+        $countResult = $products->total();
+
+    
+        $result =  [
+            'products' => $products ,
+            'countResult' => $countResult
+        ];
+        return $result;
+    }
+    
 }

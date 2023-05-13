@@ -30,7 +30,7 @@ Route::get('/', [EcController::class, 'index'])->name('index');
 
 Route::get('/cart', [EcController::class, 'showCart'])->name('showCart');
 
-
+Route::get('/search', [EcController::class, 'search'])->name('search');
 
 Route::get('/checkout', [EcController::class, 'getCheckout'])->name('getCheckout');
 Route::get('/getStates/{id}',[EcController::class, 'getStates'])->name('getStates');
@@ -53,4 +53,3 @@ Route::post('/addtocart/{id}', [EcController::class, 'AddToCart'])->name('AddToC
 Route::delete('/cart/{id}', [EcController::class, 'removeFromCart'])->name('removeFromCart');
 Route::delete('/cart', [EcController::class, 'EmptyCart'])->name('EmptyCart');
 
-Route::get('/search/{keyword}', [EcController::class, 'search'])->name('search');

@@ -298,17 +298,20 @@ class EcController extends Controller
         return response()->json(['cities' => $cities]);
     }
 
-    // public function search ($keyword)
-    // {
-
-    //     return view('user.searchResult',
-    //     [
-    //         'watchCategories' => $this->watchCategories,
-    //         'bagCategories' => $this->bagCategories,
-    //         'products' => $products,
-    //         'keyword' => $keyword,
-    //         'countResult' => $countResult
-    //     ]);
-    // }
+    public function search (Request $request)
+    {
+        // dd('hi');
+        $result=$this->ecService->search($request->keyword);
+        $products = $result['products'];
+        $countResult = $result['countResult'];
+        return view('user.searchResult',
+        [
+            'watchCategories' => $this->watchCategories,
+            'bagCategories' => $this->bagCategories,
+            'products' => $products,
+            'keyword' => $request->keyword,
+            'countResult' => $countResult
+        ]);
+    }
 
 }
