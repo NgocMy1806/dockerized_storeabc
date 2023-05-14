@@ -246,6 +246,7 @@ class EcController extends Controller
 
     public function showCart()
     {
+        // dd(session()->all());
         $cart = session()->get('cart', []);
     //     dd(session()->all());
     // dd(session('totalQuantity'));
