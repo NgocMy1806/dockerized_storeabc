@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EcController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StripePaymentController;
 
 /*
@@ -22,9 +23,9 @@ Route::get('/admin', function () {
 
 
 // route user 
-Route::get('login.html', function () {
-    echo 'View user login';
-});
+Route::get('/oauth2/idpresponse', [AuthController::class,'handleCognitoCallback'])->name('handleCognitoCallback');
+
+Route::get('/login', [AuthController::class,'getFormLogin'])->name('getFormLogin');
 
 Route::get('/', [EcController::class, 'index'])->name('index');
 

@@ -29,7 +29,7 @@
     </div>
     <div class="header_top_right">
         <ul class="header_user_info">
-            <a class="login" href="login.html">
+            <a class="login" href="{{route('getFormLogin')}}">
                 <i class="user"> </i>
                 <li class="user_desc">My Account</li>
             </a>
