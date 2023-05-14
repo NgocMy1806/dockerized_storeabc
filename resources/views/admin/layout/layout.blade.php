@@ -66,7 +66,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- Bootstrap 4 -->
 <script src="{{asset('adminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <!-- Select2 -->
-<script src="{{ asset('adminLTE/plugins/select2/js/select2.full.min.js') }}"></script>
+<script src="{{ asset('adminLTE/plugins/select2/js/select2.full.min.js')}}"></script>
 <!-- AdminLTE App -->
 <script src="{{asset('adminLTE/dist/js/adminlte.min.js')}}"></script>
 <!-- Toastr -->

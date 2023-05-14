@@ -49,9 +49,12 @@ class CategoryService extends BaseService
 
     }
     public function destroy ($id) {
-       return Category::withTrashed()
-        ->where('id', $id)
-        ->get();
+    //    return Category::withTrashed()
+    //     ->where('id', $id)
+    //     ->get();
+    $category = Category::findOrFail($id);
+    $category->delete();
+    
     } 
 
     public function changeStatus($id, $request){

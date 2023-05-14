@@ -3,6 +3,8 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use App\Http\Middleware\CustomAuthMIddleware;
+use App\Http\Middleware\UserAuthMIddleware;
 
 class Kernel extends HttpKernel
 {
@@ -55,6 +57,8 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
+        'customAuth'=>\App\Http\Middleware\CustomAuthMIddleware::class,
+        'userAuth'=>\App\Http\Middleware\UserAuthMIddleware::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,

@@ -30,6 +30,13 @@ class Product extends Model
     public function images(){
         return $this->morphMany(Media::class,'mediable')->where('type','images');
     }
+    public function tags(){
+        return $this->belongsToMany(Tag::class,'product_tags','product_id','tag_id');
+    }
 
  
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }

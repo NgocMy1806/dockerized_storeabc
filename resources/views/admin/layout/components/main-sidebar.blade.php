@@ -10,11 +10,9 @@
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="{{asset('adminLTE/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
-        </div>
+        
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block">Hello {{auth()->guard('admin')->user()->name}}</a>
         </div>
       </div>
 
@@ -39,7 +37,22 @@
                 Products
               </p>
             </a>
-           
+          </li>
+          <li class="nav-item has-treeview menu-open">
+            <a href="{{route('orders.index')}}" class="nav-link @if(Route::is('orders.*')) active @endif">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Orders
+              </p>
+            </a>
+          </li>
+          <li class="nav-item has-treeview menu-open">
+            <a href="{{route('admin.logout')}}" class="nav-link">
+              <i class="nav-icon fas fa-sign-out-alt"></i> 
+              <p>
+                Logout
+              </p>
+            </a>
           </li>
           
         </ul>

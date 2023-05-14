@@ -94,10 +94,7 @@ class CategoryController extends Controller
                 'success'=>"change status OK",
             ]);
         }
-        // dd($request->name);
-        $category=$this->categoryService->update($request,$id);
-        
-        return redirect ()->route('categories.index')->with ('success', 'edit successfully');
+      
     }
 
     /**
@@ -108,11 +105,11 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        dd('a');
-        // $category = $this->categoryService->getCategoryDetail($id);
-        // $category->delete();
-        $category = $this->categoryService->destroy($id);
-        return redirect()->route('categories.index')->with('success', 'Delete Category Successfully!');
+       
+         $category = $this->categoryService->destroy($id);
+      
+        return redirect()->route('categories.index')->with('success', 'Category has been deleted');
+    
     }
    
 }

@@ -36,13 +36,11 @@
                                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                     <button class="nav-link active" id="general_tab" data-toggle="tab"
                                         data-target="#general" type="button" role="tab" aria-controls="#general"
-                                        aria-selected="true">Home</button>
+                                        aria-selected="true">Basic information</button>
                                     <button class="nav-link" id="advanced_tab" data-toggle="tab" data-target="#advanced"
                                         type="button" role="tab" aria-controls="advanced"
-                                        aria-selected="false">Profile</button>
-                                    <button class="nav-link" id="nav-contact-tab" data-toggle="tab"
-                                        data-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                        aria-selected="false">Contact</button>
+                                        aria-selected="false">Detail information</button>
+                                   
                                 </div>
                             </nav>
                             {{-- cardbody --}}
@@ -72,14 +70,25 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Select category</label>
-                                        <select class="form-control select2" style="width: 100%;">
+                                        <select class="form-control select2" name="category_id"  style="width: 100%;">
                                             <option>Select category</option>
                                             @foreach ($childCategories as $category)
-                                                <option {{ $category->id === $product->category_id ? 'selected' : '' }}
+                                                <option {{ $category->id === $product->category->id ? 'selected' : '' }}
                                                     value="{{ $category->id }}">{{ $category->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
+
+                                    <div class="form-group">
+                                        <label>Select tags</label>
+                                        <select class="form-control select2-tags" style="width: 100%;" name="tags[]" multiple>
+
+                                            @foreach ($product->tags as $tag)
+                                                <option value="{{ $tag->id }}" selected> {{ $tag->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
 
                                     <div class="form-check">
                                         <input type="checkbox" name="is_hot" class="form-check-input" id="is_hot"
@@ -99,9 +108,9 @@
                                     </div>
 
                                     <div class="preview_thumb row">
-                                        @if ($thumbnail)
+                                        @if ($product->thumbnail)
                                             <div class="col-md-3 h-100"><img class="w-100 h-100"
-                                                    src="{{ asset('storage/thumbnail/' . $thumbnail->name) }}"
+                                                    src="{{ asset('storage/thumbnail/' . $product->thumbnail->name) }}"
                                                     alt=""></div>
                                             {{-- @else
                                         <img
@@ -116,6 +125,7 @@
                                         <input type="file" class="form-control-file images" id="images"
                                             name="images[]" multiple>
                                     </div>
+
                                     <div class="preview row">
                                         @foreach ($images as $image)
                                             <div class="col-md-3 h-100"><img class="w-100 h-100"
@@ -123,6 +133,13 @@
                                             </div>
                                         @endforeach
                                     </div>
+                                    {{-- <div class="preview row">
+                                        @foreach ($product->images as $image)
+                                            <div class="col-md-3 h-100"><img class="w-100 h-100"
+                                                    src="{{ asset('storage/images/' . $image->name) }}" alt="">
+                                            </div>
+                                        @endforeach
+                                    </div> --}}
                                 </div>
                                 {{-- tab advanced  --}}
                                 <div class="tab-pane fade" id="advanced" role="tabpanel"

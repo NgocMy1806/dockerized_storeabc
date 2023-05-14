@@ -10,7 +10,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('products.index')}}">List Products</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('products.index') }}">List Products</a></li>
                         <li class="breadcrumb-item active">Create product</li>
                     </ol>
                 </div><!-- /.col -->
@@ -34,13 +34,11 @@
                                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                     <button class="nav-link active" id="general_tab" data-toggle="tab"
                                         data-target="#general" type="button" role="tab" aria-controls="#general"
-                                        aria-selected="true">Home</button>
+                                        aria-selected="true">Basic information</button>
                                     <button class="nav-link" id="advanced_tab" data-toggle="tab" data-target="#advanced"
                                         type="button" role="tab" aria-controls="advanced"
-                                        aria-selected="false">Profile</button>
-                                    <button class="nav-link" id="nav-contact-tab" data-toggle="tab"
-                                        data-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                        aria-selected="false">Contact</button>
+                                        aria-selected="false">Detail information</button>
+                                   
                                 </div>
                             </nav>
 
@@ -78,6 +76,15 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="form-group">
+                                        <label>Select tags</label>
+                                        <select class="form-control select2-tags" style="width: 100%;" name="tags[]">
+
+                                            {{-- @foreach ($childCategories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach --}}
+                                        </select>
+                                    </div>
 
                                     <div class="form-check">
                                         <input type="checkbox" name="is_hot" class="form-check-input" id="is_hot">
@@ -95,8 +102,8 @@
 
                                     <div class="form-group">
                                         <label for="images">Images</label>
-                                        <input type="file" class="form-control-file images" id="images" name="images[]"
-                                            multiple>
+                                        <input type="file" class="form-control-file images" id="images"
+                                            name="images[]" multiple>
                                     </div>
                                     <div class="preview row"></div>
 
@@ -110,7 +117,7 @@
                                     <div class="form-group">
                                         <label for="description">Description</label>
 
-                                        <textarea class="form-control tinymce" id="description" rows="1" name='description' ></textarea>
+                                        <textarea class="form-control tinymce" id="description" rows="1" name='description'></textarea>
                                         {{-- <textarea class="form-control tinymce" id="description" rows="1" name='description'></textarea> --}}
                                     </div>
                                     <div class="form-group">
@@ -140,32 +147,77 @@
 
 @push('custom-js')
     <script>
-         $(document).ready(function() {
+        $(document).ready(function() {
             $('#thumbnail').change(function() {
-            $('.preview_thumb').empty(); // clear previous preview images
-            for (const file of this.files) {
-                let reader = new FileReader();
+                $('.preview_thumb').empty(); // clear previous preview images
+                for (const file of this.files) {
+                    let reader = new FileReader();
 
-                reader.onload = function(e) {
-                    $('.preview_thumb').append(`<div class="col-md-3 h-100"><img class="w-100 h-100" src="${e.target.result}" alt=""></div>
+                    reader.onload = function(e) {
+                        $('.preview_thumb').append(`<div class="col-md-3 h-100"><img class="w-100 h-100" src="${e.target.result}" alt=""></div>
     `);
+                    }
+                    reader.readAsDataURL(file);
                 }
-                reader.readAsDataURL(file);
-            }
-        })
-        $('#images').change(function() {
-            $('.preview').empty(); // clear previous preview images
-            for (const file of this.files) {
-                let reader = new FileReader();
+            })
+            $('#images').change(function() {
+                $('.preview').empty(); // clear previous preview images
+                for (const file of this.files) {
+                    let reader = new FileReader();
 
-                reader.onload = function(e) {
-                    $('.preview').append(`<div class="col-md-3 h-100"><img class="w-100 h-100" src="${e.target.result}" alt=""></div>
+                    reader.onload = function(e) {
+                        $('.preview').append(`<div class="col-md-3 h-100"><img class="w-100 h-100" src="${e.target.result}" alt=""></div>
     `);
+                    }
+                    reader.readAsDataURL(file);
                 }
-                reader.readAsDataURL(file);
-            }
+            })
         })
-    })
-        // $('.select2').select2();
+        $('.select2').select2();
+        $('.select2-tags').select2({
+            multiple: true,
+            tags: true,
+            delay: 500,
+            ajax: {
+                url: '{{route('tags.searchTag')}}',
+                dataType: 'json',
+                perPage: 9,
+                // data gửi lên server 
+                data: function(params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1
+                    }
+
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                // nội dung xử lí, biến data trong function bên dưới này là data sever trả về
+                processResults: function(data, params) {
+                    params.page = params.page || 1;
+
+                    let results = [];
+
+                    console.log(data.data);
+
+                    for (const tag of data.data) {
+                        results.push({
+                            id: tag.id,
+                            text: tag.name,
+                        })
+                        console.log(tag);
+                    }
+
+                    return {
+                        results: results,
+                        pagination: {
+                            more: (params.page * 9) < data.total
+                        }
+                    };
+                }
+                
+            }
+
+        });
     </script>
 @endpush
