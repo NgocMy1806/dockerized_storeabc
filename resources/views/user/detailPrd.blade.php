@@ -24,7 +24,7 @@
                 <div class="price_single">
                     {{-- tạm thời chưa làm logic sale price --}}
                     {{-- <span class="reducedfrom">{{$product->price}}</span> --}}
-                    <span class="amount item_price actual">$ {{ $product->price }}</span>
+                    <p >Price:  <span class="amount item_price actual">$ {{ $product->price }}</span></p>
                 </div>
                 <h2 class="quick">Quick Overview:</h2>
                 @php
@@ -36,15 +36,15 @@
                         <li class="wish"><a href="#">Add to Wishlist</a></li>
                     </ul>
                 </div>
-                <ul class="size">
-                    <h3>Length</h3>
-                    <li><a href="#">32</a></li>
-                    <li><a href="#">34</a></li>
+                <ul class="color size">
+                    <h3>Color</h3>
+                    <li><a href="#">Pink</a></li>
+                    <li><a href="#">White</a></li>
                 </ul>
                 <div class="quantity_box">
                     <ul class="product-qty">
                         <span>Quantity:</span>
-                        <select>
+                        <select class="quantity-select">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>

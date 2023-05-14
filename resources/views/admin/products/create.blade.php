@@ -34,13 +34,11 @@
                                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                     <button class="nav-link active" id="general_tab" data-toggle="tab"
                                         data-target="#general" type="button" role="tab" aria-controls="#general"
-                                        aria-selected="true">Home</button>
+                                        aria-selected="true">Basic information</button>
                                     <button class="nav-link" id="advanced_tab" data-toggle="tab" data-target="#advanced"
                                         type="button" role="tab" aria-controls="advanced"
-                                        aria-selected="false">Profile</button>
-                                    <button class="nav-link" id="nav-contact-tab" data-toggle="tab"
-                                        data-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                        aria-selected="false">Contact</button>
+                                        aria-selected="false">Detail information</button>
+                                   
                                 </div>
                             </nav>
 

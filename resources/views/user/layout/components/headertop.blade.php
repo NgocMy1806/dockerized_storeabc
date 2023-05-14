@@ -8,8 +8,10 @@
                             {{ session()->has('cart') && count(session('cart')) > 0 ? count(session('cart')) : 0 }}
                         </span> items)</p> --}}
                         <p>Cart: <span id="cart-total" style="margin-top:6px;color:black;">${{ session('total', '0.00') }}
-                        </span> (<span id="cart-count">{{ session()->has('cart') && count(session('cart')) > 0 ? count(session('cart')) : 0 }}</span> items)</p>
-                    
+
+                            {{-- show number of unique prd in cart --}}
+                        {{-- </span> (<span id="cart-count">{{ session()->has('cart') && count(session('cart')) > 0 ? count(session('cart')) : 0 }}</span> items)</p> --}}
+                    </span> (<span id="cart-count">{{ session()->has('totalQuantity') && session('totalQuantity') > 0 ? session('totalQuantity') : 0 }}</span> items)</p>
                     <img src="{{ asset('user/images/bag.png') }}" alt="" />
                     <div class="clearfix"> </div>
                 </h4>

@@ -210,51 +210,62 @@ class EcController extends Controller
         $cart = session()->get('cart', []);
         if (isset($cart[$id])) {
             $cart[$id]['quantity'] += $request->quantity;
-            // $cart[$id]['quantity']++;
+           
         } else {
             $cart[$id] = [
                 'id' => $product->id,
                 'name' => $product->name,
                 'price' => $product->price,
-                'quantity' => 1,
+                'quantity' => $request->quantity,
                 'thumbnail' => $thumbnail
             ];
+
+            
         }
+        $totalQuantity = array_sum(array_column($cart, 'quantity'));
+
+        // total amount
         $total = 0;
         foreach ($cart as $item) {
             $total += $item['price'] * $item['quantity'];
         }
-
+        
         session()->put('cart', $cart);
         session()->put('total', $total);
+        session()->put('totalQuantity', $totalQuantity);
 
         return response()->json([
             'success' => 'Product added to cart successfully!',
             'cart' => $cart,
             'total' => $total,
-            'cartCount' => count(session('cart')),
+            'totalQuantity' => $totalQuantity,
+            // 'cartCount' => count(session('cart')), show number of distinct prd in cart
+            
         ]);
     }
 
     public function showCart()
     {
         $cart = session()->get('cart', []);
+    //     dd(session()->all());
+    // dd(session('totalQuantity'));
 
-        $total = 0;
+        // $total = 0;
+        // foreach ($cart as $item) {
+        //     $total += $item['price'] * $item['quantity'];
+        // }
+        // $totalQuantity = array_sum(array_column($cart, 'quantity'));
 
-        foreach ($cart as $item) {
-            $total += $item['price'] * $item['quantity'];
-        }
-
-        $e = array_sum(array_column($cart, 'quantity'));
-
+        $shipping_fee=0.00;
         return view(
             'user.cart',
             [
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
                 'cart' => $cart,
-                'total' =>  $total
+                'shipping_fee'=>$shipping_fee,
+                // 'total' =>  $total,
+                // 'totalQuantity' => $totalQuantity,
             ]
         );
     }
@@ -263,6 +274,7 @@ class EcController extends Controller
 
         session()->forget('cart');
         session()->forget('total');
+        session()->forget('totalQuantity');
         return redirect()->back()->with('success', 'Cart emptied successfully!');
     }
 
@@ -289,6 +301,32 @@ class EcController extends Controller
         // return redirect()->back()->with('success', 'Product removed from cart successfully!');
         return redirect()->route('showCart')->with('success', 'Product removed from cart successfully!');
     }
+
+    public function changeQty(Request $request)
+{
+    $cart = session()->get('cart', []);
+    $shipping_fee=0.00;
+    $total = 0;
+    $totalQuantity = 0;
+    $cart[$request->id]['quantity'] = $request->quantity;
+    session()->put('cart', $cart);
+
+    foreach ($cart as $item) {
+        $total += $item['price'] * $item['quantity'];
+        $totalQuantity += $item['quantity'];
+    }
+    session()->put('total', $total);
+    session()->put('totalQuantity', $totalQuantity);
+
+    return response()->json([
+        'success' => 'Changed quantity successfully!',
+        'cart' => $cart,
+        'total' => $total,
+        'totalQuantity' => $totalQuantity,
+        'shipping_fee'=>$shipping_fee,
+    ]);
+}
+
 
     public function getCheckout()
     {
