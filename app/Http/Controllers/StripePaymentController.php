@@ -86,7 +86,6 @@ class StripePaymentController extends Controller
   public function checkoutOK(Request $request)
   {
 
-
     // Retrieve email from session
     // $email = Session::get('checkout.email');
 
@@ -153,6 +152,9 @@ class StripePaymentController extends Controller
       Session::forget('cart');
       Session::forget('total');
 
+      // Send the order confirmation email
+      Mail::to($customer->email)->send(new OrderSuccessMail($customer, $order));
+      
       // Redirect to the order confirmation page
       DB::commit();
       return view('user.checkoutOK', ['payment_method' => 'stripe']);
@@ -213,8 +215,8 @@ class StripePaymentController extends Controller
       Session::forget('cart');
       Session::forget('total');
 
-        // Send the order confirmation email
-        Mail::to($customer->email)->send(new OrderSuccessMail($customer, $order));
+      // Send the order confirmation email
+      Mail::to($customer->email)->send(new OrderSuccessMail($customer, $order));
 
       //session()->put('payment_method', 'bank');
       if ($paymentMethod == 'bank') {

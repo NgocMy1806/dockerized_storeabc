@@ -32,6 +32,7 @@ Route::get('/cart', [EcController::class, 'showCart'])->name('showCart');
 
 Route::get('/search', [EcController::class, 'search'])->name('search');
 
+//show checkout screen
 Route::get('/checkout', [EcController::class, 'getCheckout'])->name('getCheckout');
 Route::get('/getStates/{id}',[EcController::class, 'getStates'])->name('getStates');
 Route::get('/getCities/{id}',[EcController::class, 'getCities'])->name('getCities');

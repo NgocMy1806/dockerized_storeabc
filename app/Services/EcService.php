@@ -13,55 +13,71 @@ use Illuminate\Support\Facades\Storage;
 
 class EcService extends BaseService
 {
-    public function getWatchCategories(){
-        return Category::where('parent_id',2)->get();
+    public function getWatchCategories()
+    {
+        return Category::where('parent_id', 2)->withCount('products')->get();
     }
-    public function getBagCategories(){
-        return Category::where('parent_id',1)->withCount('products')->get();
+    public function getBagCategories()
+    {
+        return Category::where('parent_id', 1)->withCount('products')->get();
     }
-    public function getTop3HotProducts(){
-        return Product::where('is_hot',1)->take(3)->with('thumbnail')->get();
+    public function getTop3HotProducts()
+    {
+        return Product::where('is_hot', 1)->take(3)->with('thumbnail')->get();
     }
-    public function getAllHotProducts(){
-        return Product::where('is_hot',1)->with('thumbnail')->get()->paginate(9);
-    }
-
-    public function getListWatches(){
-        return Product::select('products.*')
-        ->join('categories', 'products.category_id', '=', 'categories.id')
-        ->whereIn('products.category_id', function ($query) {
-            $query->select('id')
-                  ->from('categories')
-                  ->whereNotIn('parent_id',[0,1]);
-        })
-        ->with('thumbnail')->paginate(9);
-
+    public function getAllHotProducts()
+    {
+        return Product::where('is_hot', 1)->with('thumbnail')->get()->paginate(9);
     }
 
-    public function getListWatchesOfChildCategory($category){
+    // public function getListWatches()
+    // {
+    //     return Product::select('products.*')
+    //         ->join('categories', 'products.category_id', '=', 'categories.id')
+    //         ->whereIn('products.category_id', function ($query) {
+    //             $query->select('id')
+    //                 ->from('categories')
+    //                 ->whereNotIn('parent_id', [0, 1]);
+    //         })
+    //         ->with('thumbnail')->paginate(9);
+    // }
 
-    }
 
-   
 
-    public function getListBags($request){
-        $query =  Product::select('products.*')
-        ->join('categories', 'products.category_id', '=', 'categories.id')
-        ->whereIn('products.category_id', function ($query) {
-            $query->select('id')
-                  ->from('categories')
-                  ->whereNotIn('parent_id',[0,2]);
-        })
-        ->with('thumbnail');
-        
+
+//get list prd from parent category (bag or watch)
+    public function getListPrd($request, $parentCategory)
+    {
+        if ($parentCategory == 1) {
+            $query =  Product::select('products.*')
+                ->join('categories', 'products.category_id', '=', 'categories.id')
+                ->whereIn('products.category_id', function ($query) {
+                    $query->select('id')
+                        ->from('categories')
+                        //   ->whereNotIn('parent_id',[0,2]);
+                        ->where('parent_id', 1);
+                })
+                ->with('thumbnail');
+        }
+        else{
+            $query =  Product::select('products.*')
+            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->whereIn('products.category_id', function ($query) {
+                $query->select('id')
+                    ->from('categories')
+                    
+                    ->where('parent_id', 2);
+            })
+            ->with('thumbnail');
+        }
         $priceRanges = [
             '0-300' => [0, 300],
             '300-600' => [300, 600],
             '600+' => [600, null],
         ];
-        
-        $bags_count = [];
-        
+
+        $prd_count = [];
+
         foreach ($priceRanges as $key => $range) {
             $countQuery = clone $query; // phải clone vì nếu dùng nguyên query thì sẽ làm thay đổi giá trị của query, ảnh hưởng đến xử lí bên dưới
             if ($range[1]) {
@@ -70,9 +86,9 @@ class EcService extends BaseService
                 $countQuery->where('price', '>=', $range[0]);
             }
             $count = $countQuery->count();
-            $bags_count[$key] = $count;
+            $prd_count[$key] = $count;
         }
-        
+
         if ($request->sort_key == 'az') {
             $query->orderBy('name', 'ASC');
         }
@@ -97,30 +113,31 @@ class EcService extends BaseService
         //  return $query->paginate(10);
         $result = [
             'products' => $query->paginate(9),
-            'bags_count' => $bags_count,
+            'prd_count' => $prd_count,
         ];
         return $result;
     }
 
-    public function getListPrdOfChildCategory($category, $request){
-        $query= Product::where('category_id',$category)->with('thumbnail');
+    public function getListPrdOfChildCategory($category, $request)
+    {
+        $query = Product::where('category_id', $category)->with('thumbnail');
         $priceRanges = [
             '0-300' => [0, 300],
             '300-600' => [300, 600],
             '600+' => [600, null],
         ];
-        
-        $bags_count = [];
-        
+
+        $prd_count = [];
+
         foreach ($priceRanges as $key => $range) {
-            $countQuery = clone $query; 
+            $countQuery = clone $query;
             if ($range[1]) {
                 $countQuery->whereBetween('price', $range);
             } else {
                 $countQuery->where('price', '>=', $range[0]);
             }
             $count = $countQuery->count();
-            $bags_count[$key] = $count;
+            $prd_count[$key] = $count;
         }
         if ($request->sort_key == 'az') {
             $query->orderBy('name', 'ASC');
@@ -136,22 +153,22 @@ class EcService extends BaseService
         }
         if ($request->has('price_range')) {
             $price_range = explode('-', $request->price_range);
-        
+
             if ($price_range[1] == '') {
                 $query->where('price', '>=', $price_range[0]);
             } else {
                 $query->whereBetween('price', [$price_range[0], $price_range[1]]);
             }
         }
-      
+
         $result = [
             'products' => $query->paginate(9),
-            'bags_count' => $bags_count,
+            'prd_count' => $prd_count,
         ];
         return $result;
     }
 
-   
+
 
     public function getImages($request)
     {
@@ -164,12 +181,11 @@ class EcService extends BaseService
         $products = Product::where('name', 'like', '%' . $keyword . '%')->with('thumbnail')->paginate(9);
         $countResult = $products->total();
 
-    
+
         $result =  [
-            'products' => $products ,
+            'products' => $products,
             'countResult' => $countResult
         ];
         return $result;
     }
-    
 }

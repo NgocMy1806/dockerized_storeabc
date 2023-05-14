@@ -31,15 +31,15 @@
         <ul class="product-price color sidebar product-categories">
             <li class="cat-item cat-item-42">
                 <a href="{{ route('listBags', ['price_range' => '0-300']) }}" class="price-link" data-price-range="0-300">0$-300$</a>
-                <span class="count">({{ $bags_count['0-300'] }})</span>
+                <span class="count">({{ $prd_count['0-300'] }})</span>
             </li>
             <li class="cat-item cat-item-42">
                 <a href="{{ route('listBags', ['price_range' => '300-600']) }}" class="price-link" data-price-range="300-600">300$-600$</a>
-                <span class="count">({{ $bags_count['300-600'] }})</span>
+                <span class="count">({{ $prd_count['300-600'] }})</span>
             </li>
             <li class="cat-item cat-item-54">
                 <a href="{{ route('listBags', ['price_range' => '600-']) }}" class="price-link" data-price-range="600-">600$~</a>
-                <span class="count">({{ $bags_count['600+'] }})</span>
+                <span class="count">({{ $prd_count['600+'] }})</span>
             </li>
         </ul>
 
