@@ -10,12 +10,13 @@ class AuthController extends Controller
     public function getFormLogin()
     {
         $currentUrl = url()->previous();
+        // dd(env('COGNITO_TOKEN_URL'));
         // dd($currentUrl);
         // dd(base64_encode(env('COGNITO_CLIENT_ID'). ':' . env('COGNITO_CLIENT_SECRET')));
         //Mjk0ODlqbmltajZxc244NHFzb2t1NjN1bmg6NnEzdmVnbnUwbGxzcG0wZGgxcDd2YjRjc25rdjA3ZTNwaWgyOGY1OWFqMTI1Z3BwMTk=
 
         session()->put('previous_url', $currentUrl);
-        $loginUrl = 'https://local-sys.auth.us-east-1.amazoncognito.com/login?client_id=29489jnimj6qsn84qsoku63unh&response_type=code&scope=email+openid+phone&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Fidpresponse';
+        $loginUrl = 'https://local-sys.auth.us-east-1.amazoncognito.com/login?client_id=29489jnimj6qsn84qsoku63unh&response_type=code&scope=openid&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Fidpresponse';
         return redirect($loginUrl);
     }
 
@@ -35,10 +36,10 @@ class AuthController extends Controller
                 'code' => $code,
                 'redirect_uri' => env('COGNITO_REDIRECT_URI'),
             ]);
-        // $status = $response->status();
-        // $body = $response->body();
-        // dd($status, $body);
-        $accessToken = $tokenResponse['access_token'];
+        $status = $tokenResponse->status();
+        $body = $tokenResponse->body();
+        dd($status, $body);
+        $accessToken = $tokenResponse->json()['access_token'];
         $userData = Http::withToken($accessToken)
         ->withHeaders([
             'Authorization' => 'Bearer ' . $accessToken,
