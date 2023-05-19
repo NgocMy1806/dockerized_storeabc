@@ -15,10 +15,23 @@ use Stripe\PaymentIntent;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 use Illuminate\Support\Facades\Mail;
+use App\Services\EcService;
 
 
 class StripePaymentController extends Controller
 {
+  public $ecService;
+  public $watchCategories;
+  public $bagCategories;
+
+  public function __construct(EcService $ecService)
+  {
+
+    $this->ecService = $ecService;
+    $this->watchCategories = $this->ecService->getWatchCategories();
+    $this->bagCategories = $this->ecService->getBagCategories();
+  }
+
   public function checkout(Request $request)
   {
     $paymentMethod = $request->input('payment_method');
@@ -83,6 +96,7 @@ class StripePaymentController extends Controller
     return $line_items;
   }
 
+  //checkout ok in case of using stripe
   public function checkoutOK(Request $request)
   {
 
@@ -154,10 +168,18 @@ class StripePaymentController extends Controller
 
       // Send the order confirmation email
       Mail::to($customer->email)->send(new OrderSuccessMail($customer, $order));
-      
+
       // Redirect to the order confirmation page
       DB::commit();
-      return view('user.checkoutOK', ['payment_method' => 'stripe']);
+      return view(
+        'user.checkoutOK',
+        [
+          'payment_method' => 'stripe',
+          'watchCategories' => $this->watchCategories,
+          'bagCategories' => $this->bagCategories,
+
+        ]
+      );
     } catch (Throwable $e) {
       DB::rollBack();
       dd($e);
@@ -167,8 +189,9 @@ class StripePaymentController extends Controller
   public function checkoutBankTransfer(Request $request)
   {
     $paymentMethod = $request->input('payment_method');
-   // dd($paymentMethod);
+    // dd($paymentMethod);
     try {
+      
       $cart = session()->get('cart', []);
       // dd ($cart);
       $total = Session::get('total');
@@ -220,9 +243,23 @@ class StripePaymentController extends Controller
 
       //session()->put('payment_method', 'bank');
       if ($paymentMethod == 'bank') {
-        return view('user.checkoutOK', ['payment_method' => 'bank']);
+        return view(
+          'user.checkoutOK',
+          [
+            'payment_method' => 'bank',
+            'watchCategories' => $this->watchCategories,
+            'bagCategories' => $this->bagCategories,
+          ]
+        );
       } else {
-        return view('user.checkoutOK', ['payment_method' => 'COD']);
+        return view(
+          'user.checkoutOK',
+          [
+            'payment_method' => 'COD',
+            'watchCategories' => $this->watchCategories,
+            'bagCategories' => $this->bagCategories,
+          ]
+        );
       }
     } catch (Throwable $e) {
       DB::rollBack();

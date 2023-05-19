@@ -12,14 +12,17 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class EcController extends Controller
 {
     private $productService;
     private $categoryService;
-    private $ecService;
+    public $ecService;
     public $watchCategories;
     public $bagCategories;
+    
     public function __construct(ProductService $productService, CategoryService $categoryService, EcService $ecService)
     {
         $this->productService = $productService;
@@ -42,7 +45,6 @@ class EcController extends Controller
         $cart = session()->get('cart');
         $total = session()->get('total');
 
-
         return view(
             'user.index',
             [
@@ -55,6 +57,7 @@ class EcController extends Controller
 
     public function getListBags(Request $request)
     {
+       
         $parentCategory=1;
         $result = $this->ecService->getListPrd($request,$parentCategory);
         $products = $result['products'];

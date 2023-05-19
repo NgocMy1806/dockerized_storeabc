@@ -94,7 +94,8 @@ class CategoryController extends Controller
                 'success'=>"change status OK",
             ]);
         }
-      
+        $this->categoryService->update($request,$id);
+        return redirect ()->route('categories.index')->with ('success', 'edit successfully');
     }
 
     /**

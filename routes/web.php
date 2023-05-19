@@ -26,8 +26,10 @@ Route::get('/admin', function () {
 Route::get('/oauth2/idpresponse', [AuthController::class,'handleCognitoCallback'])->name('handleCognitoCallback');
 
 Route::get('/login', [AuthController::class,'getFormLogin'])->name('getFormLogin');
+Route::get('/logout', [AuthController::class,'logout'])->name('logout');
 
 Route::get('/', [EcController::class, 'index'])->name('index');
+Route::get('/index', [EcController::class, 'index'])->name('index');
 
 Route::get('/cart', [EcController::class, 'showCart'])->name('showCart');
 

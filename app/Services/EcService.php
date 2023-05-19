@@ -10,17 +10,51 @@ use Illuminate\Support\Facades\DB;
 use Throwable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Redis;
 
 class EcService extends BaseService
 {
     public function getWatchCategories()
     {
-        return Category::where('parent_id', 2)->withCount('products')->get();
+        $cacheKey = 'watch_categories';
+
+        // Check if the categories exist in the cache
+        if (Redis::exists($cacheKey)) {
+            // Retrieve the categories from the cache
+            $categories = json_decode(Redis::get($cacheKey));
+        } else {
+            // Fetch the categories from the database
+            $categories = Category::where('parent_id', 2)->withCount('products')->get();
+    
+            // Store the categories in the cache for future use
+            Redis::set($cacheKey, json_encode($categories));
+        }
+    
+        return $categories;
+        
     }
-    public function getBagCategories()
-    {
-        return Category::where('parent_id', 1)->withCount('products')->get();
+   
+public function getBagCategories()
+{
+    $cacheKey = 'bag_categories';
+
+    // Check if the categories exist in the cache
+    if (Redis::exists($cacheKey)) {
+        // Retrieve the categories from the cache
+        $categories = json_decode(Redis::get($cacheKey));
+        // dump('edis');
+    } else {
+        // Fetch the categories from the database
+        $categories = Category::where('parent_id', 1)->withCount('products')->get();
+
+        // Store the categories in the cache for future use
+        Redis::set($cacheKey, json_encode($categories));
+        $expirationTime = 60 * 60; // 1 hour
+        // dump('db');
     }
+
+    return $categories;
+}
     public function getTop3HotProducts()
     {
         return Product::where('is_hot', 1)->take(3)->with('thumbnail')->get();

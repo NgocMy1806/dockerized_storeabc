@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthController extends Controller
 {
@@ -15,51 +17,87 @@ class AuthController extends Controller
         // dd(base64_encode(env('COGNITO_CLIENT_ID'). ':' . env('COGNITO_CLIENT_SECRET')));
         //Mjk0ODlqbmltajZxc244NHFzb2t1NjN1bmg6NnEzdmVnbnUwbGxzcG0wZGgxcDd2YjRjc25rdjA3ZTNwaWgyOGY1OWFqMTI1Z3BwMTk=
 
-        session()->put('previous_url', $currentUrl);
-        $loginUrl = 'https://local-sys.auth.us-east-1.amazoncognito.com/login?client_id=29489jnimj6qsn84qsoku63unh&response_type=code&scope=openid&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Fidpresponse';
+        session()->put('previousUrl', $currentUrl);
+        $loginUrl = env('COGNITO_LOGIN_URL');
         return redirect($loginUrl);
     }
 
     public function handleCognitoCallback(Request $request)
     {
-        $code = $request->query('code');
-        //use code to get name of user in cognito
-        $credentials = base64_encode(env('COGNITO_CLIENT_ID') . ':' . env('COGNITO_CLIENT_SECRET'));
-        $tokenResponse =  Http::withHeaders([
-            'Content-Type' => 'application/x-www-form-urlencoded',
-            'Authorization' => 'Basic ' . $credentials,
-        ])
-            ->post(env('COGNITO_TOKEN_URL'), [
-                'grant_type' => 'authorization_code',
-                'client_id' => env('COGNITO_CLIENT_ID'),
+        try {
+            $code = $request->query('code');
+            //get access token
+            $credentials = base64_encode(env('COGNITO_CLIENT_ID') . ':' . env('COGNITO_CLIENT_SECRET'));
+            $tokenUrl = env('COGNITO_TOKEN_URL');
+            $clientId = env('COGNITO_CLIENT_ID');
+            $redirectUri = env('COGNITO_REDIRECT_URI');
 
-                'code' => $code,
-                'redirect_uri' => env('COGNITO_REDIRECT_URI'),
-            ]);
-        $status = $tokenResponse->status();
-        $body = $tokenResponse->body();
-        dd($status, $body);
-        $accessToken = $tokenResponse->json()['access_token'];
-        $userData = Http::withToken($accessToken)
-        ->withHeaders([
-            'Authorization' => 'Bearer ' . $accessToken,
-        ])
-        ->get(env('COGNITO_USERINFO_URL'));
-        if ($userData->successful()) {
-            $userName = $userData->json()['name'];
-            session()->put('user_name', $userName);
-            // Use the access token for further requests or store it in the session
-            if (session()->has('previous_url')) {
-                $previousUrl = session()->pull('previous_url');
-                return redirect($previousUrl);
+            $requestUrl = "{$tokenUrl}?grant_type=authorization_code&client_id={$clientId}&code={$code}&redirect_uri={$redirectUri}";
+
+            // dd($credentials, $code);
+            $tokenResponse =  Http::withHeaders([
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Authorization' => 'Basic ' . $credentials,
+            ])
+                ->post($requestUrl);
+
+
+            $status = $tokenResponse->status();
+            $body = $tokenResponse->body();
+            // dump($status, $body);
+            $accessToken = $tokenResponse->json()['access_token'];
+            // dump($accessToken);
+
+            //get user infor by userinfor endpoint
+            $userInforUrl = env('COGNITO_USERINFO_URL');
+            $userData = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $accessToken,
+            ])
+                ->get($userInforUrl);
+
+            if ($userData->successful()) {
+                $userName = $userData->json()['name'];
+
+                session()->put('userName', $userName);
+                // Use the access token for further requests or store it in the session
+                if (session()->has('previousUrl')) {
+                    $previousUrl = session()->pull('previousUrl');
+                    return redirect($previousUrl);
+                } else {
+                    return redirect('/index');
+                }
             } else {
-                return redirect('/index');
+                // Error occurred while retrieving the access token
+                $error = $userData->json()['error'];
+                $errorMessage = $userData->json()['error_description'];
+                dd($error, $errorMessage);
             }
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        $request->session()->invalidate();
+        $clientId = env('COGNITO_CLIENT_ID');
+        $logoutUrl = env('COGNITO_LOGOUT_URL');
+        $logoutRedirectUri = env('COGNITO_LOGOUT_REDIRECT_URI');
+        $requestUrl = "{$logoutUrl}?client_id={$clientId}&redirect_uri={$logoutRedirectUri}";
+        // call logout endpoint
+        $response = Http::get($requestUrl);
+        // $response = Http::get('https://local-sys.auth.us-east-1.amazoncognito.com/logout?
+        // client_id=29489jnimj6qsn84qsoku63unh&
+        // logout_uri=http://localhost:8000');
+
+ 
+        if ($response->successful()) {
+          
+            // return redirect($logoutRedirectUri);
+            return redirect('http://localhost:8000/index');
         } else {
-            // Error occurred while retrieving the access token
-            $error = $userData->json()['error'];
-            $errorMessage = $userData->json()['error_description'];
-            dd($error, $errorMessage);
+           
+            return redirect()->back()->with('error', 'Logout failed. Please try again.');
         }
     }
 }

@@ -31,10 +31,24 @@
         <ul class="header_user_info">
             <a class="login" href="{{route('getFormLogin')}}">
                 <i class="user"> </i>
+                @if(session()->has('userName'))
                 <li class="user_desc">My Account</li>
+                @else
+                <li class="user_desc">Login</li>
+                @endif
             </a>
             <div class="clearfix"> </div>
         </ul>
+        @if(session()->has('userName'))
+        <ul class="header_user_info">
+            <a class="logout" href="{{route('logout')}}">
+                <i class="user"> </i>
+                <li class="user_desc">Log out</li>
+            </a>
+            <div class="clearfix"> </div>
+        </ul>
+       @endif
+
         <!-- start search-->
         <div class="search-box">
             <div id="sb-search" class="sb-search">
