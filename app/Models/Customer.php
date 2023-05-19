@@ -11,6 +11,7 @@ class Customer extends Model
     protected $fillable=[
         'name',
         'email',
+        'cognito_id',
         'email_verified_at',
         'password',
         'country_id',

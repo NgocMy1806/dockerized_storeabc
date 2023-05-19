@@ -383,4 +383,12 @@ class EcController extends Controller
         ]);
     }
 
+    public function getMypage($id)
+    {
+        $userName = session()->get('userName');
+        $orders = $this->ecService->getOrderHistory($id);
+
+        return view('mypage', compact('userName', 'orders'));
+    }
+
 }

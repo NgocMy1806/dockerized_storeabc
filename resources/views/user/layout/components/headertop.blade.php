@@ -29,11 +29,13 @@
     </div>
     <div class="header_top_right">
         <ul class="header_user_info">
-            <a class="login" href="{{route('getFormLogin')}}">
-                <i class="user"> </i>
                 @if(session()->has('userName'))
+                <a class="login mypage" href="{{ route('mypage', ['id' => session()->get('userId')]) }}">
+                    <i class="user"> </i>
                 <li class="user_desc">My Account</li>
                 @else
+                <a class="login" href="{{route('getFormLogin')}}">
+                    <i class="user"> </i>
                 <li class="user_desc">Login</li>
                 @endif
             </a>

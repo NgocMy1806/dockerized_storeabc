@@ -5,12 +5,14 @@ namespace App\Services;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Media;
+use App\Models\Order;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redis;
+
 
 class EcService extends BaseService
 {
@@ -221,5 +223,11 @@ public function getBagCategories()
             'countResult' => $countResult
         ];
         return $result;
+    }
+
+    public function getOrderHistory($id)
+    {
+        $orders= Order::where('customer_id',$id)->with('orderDetails')->paginate(9);
+        return $orders; 
     }
 }

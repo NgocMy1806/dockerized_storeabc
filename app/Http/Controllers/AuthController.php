@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redirect;
+use App\Models\Customer;
 
 class AuthController extends Controller
 {
@@ -26,6 +25,7 @@ class AuthController extends Controller
     {
         try {
             $code = $request->query('code');
+            // dd($code);
             //get access token
             $credentials = base64_encode(env('COGNITO_CLIENT_ID') . ':' . env('COGNITO_CLIENT_SECRET'));
             $tokenUrl = env('COGNITO_TOKEN_URL');
@@ -34,7 +34,7 @@ class AuthController extends Controller
 
             $requestUrl = "{$tokenUrl}?grant_type=authorization_code&client_id={$clientId}&code={$code}&redirect_uri={$redirectUri}";
 
-            // dd($credentials, $code);
+            //  dd($credentials, $code);
             $tokenResponse =  Http::withHeaders([
                 'Content-Type' => 'application/x-www-form-urlencoded',
                 'Authorization' => 'Basic ' . $credentials,
@@ -57,8 +57,29 @@ class AuthController extends Controller
 
             if ($userData->successful()) {
                 $userName = $userData->json()['name'];
+                $cognitoId = $userData->json()['sub'];
+                $userEmail = $userData->json()['email']; // cognito ID
+                $customer = Customer::where('email', $userEmail)->first();
 
+                if (!$customer) {
+                    // Customer does not exist, create a new record
+                    $customer = Customer::create([
+                        'name'=> $userName,
+                        'email' => $userEmail,
+                        'cognito_id' => $cognitoId, 
+                    ]);
+                }
+                elseif(isset($customer) && $customer->cognito_id ==null)
+                {
+                    $customer->update([
+                        'cognito_id' => $cognitoId,
+                    ]);
+                }
+
+                $userId = $customer->id;
+                // dd($userId);
                 session()->put('userName', $userName);
+                session()->put('userId', $userId);
                 // Use the access token for further requests or store it in the session
                 if (session()->has('previousUrl')) {
                     $previousUrl = session()->pull('previousUrl');
