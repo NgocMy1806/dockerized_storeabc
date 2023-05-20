@@ -53,7 +53,7 @@ class ProductService extends BaseService
         if ($request->sort_key == 'price_down') {
             $query->orderBy('price', 'DESC');
         }
-
+        $query->orderBy('created_at', 'DESC');
         return $query->paginate(10);
     }
 
@@ -133,18 +133,23 @@ class ProductService extends BaseService
             $id = $product->id;
             // dd($id);
 
-            $tag = [];
-            if (isset($request->tags)) {
-                foreach ($request->tags as $tag) {
-                    if (is_numeric($tag)) {
-                        $tags[] = $tag;
-                    } else {
-                        $newTag = $this->tagService->store($tag);
-                        $tags[] = $newTag->id;
-                    }
+            
+            if ($request->has('tags')) {
+                $selectedTags = $request->input('tags');
+
+                // Create new tags if they don't exist
+                $tagIds = [];
+                foreach ($selectedTags as $tag) {
+                    $tagModel = Tag::firstOrCreate([
+                        'name' => $tag,
+                        'slug' => Str::slug($tag),
+                    ]);
+                    $tagIds[] = $tagModel->id;
+                    
                 }
+
+                $product->tags()->sync($tagIds);
             }
-            $product->tags()->sync($tags);
 
             $this->store_thumb($id, $request);
             $this->store_images($id, $request);
