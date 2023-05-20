@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Services\TagService;
 use Illuminate\Http\Request;
 use App\Enums\sortTypeEnum;
+use App\Models\Tag;
 
 class ProductController extends Controller
 {
@@ -54,8 +55,12 @@ class ProductController extends Controller
     public function create()
     {
         // dd(bcrypt(12345678));
+        $tags = Tag::all();
         $childCategories = $this->categoryService->getChildCategories();
-        return view('admin.products.create', ['childCategories' => $childCategories]);
+        return view('admin.products.create', 
+        ['childCategories' => $childCategories, 
+        'tags'=>$tags,
+        ]);
     }
 
     /**
@@ -92,23 +97,24 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        $product=Product::where('id',$id)->with(['tags','thumbnail',])->first();
+        $product=Product::where('id',$id)->with(['tags','thumbnail','images'])->first();
         $childCategories = $this->categoryService->getChildCategories();
         // $product = $this->productService->getProductDetail($id);
         
-        //ko cần lấy riêng thumbnail, dùng with để get ra quan hệ là được r
+        //ko cần lấy riêng thumbnail, images, dùng with để get ra quan hệ là được r
         //$thumbnail = $this->productService->getThumbnail($id);
+        //  $images = $this->productService->getImages($id);
+         $images = $product->images;
 
-         $images = $this->productService->getImages($id);
-
-        
+         $tags = Tag::all();
         return view(
             'admin.products.edit',
             [
                  'childCategories' => $childCategories,
                 'product' => $product,
                 // 'thumbnail' => $thumbnail,
-                'images' => $images
+                'images' => $images,
+                'tags'=>$tags,
             ]
         );
     }

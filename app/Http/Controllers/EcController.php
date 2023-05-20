@@ -188,9 +188,17 @@ class EcController extends Controller
     }
     public function getDetailPrd($id)
     {
-        $product = Product::where('id', $id)->with(['tags', 'thumbnail'])->first();
-        $images = $this->productService->getImages($id);
-
+        $product = Product::where('id', $id)->with(['tags', 'thumbnail', 'images'])->first();
+        $images = $product->images;
+        $relatedProducts = Product::whereHas('tags', function ($query) use ($product) {
+            $query->whereIn('tags.id', $product->tags->pluck('id'));
+        })
+        ->where('products.id', '!=', $id)
+        ->with(['tags', 'thumbnail'])
+        ->orderBy('products.created_at', 'DESC')
+        ->limit(4)
+        ->get();
+        
         return view(
             'user.detailPrd',
             [
@@ -198,6 +206,7 @@ class EcController extends Controller
                 'images' => $images,
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
+                'relatedProducts'=>$relatedProducts
             ]
         );
     }
