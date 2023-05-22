@@ -228,6 +228,7 @@ public function getBagCategories()
     public function getOrderHistory($id)
     {
         $orders= Order::where('customer_id',$id)->with('orderDetails')->paginate(9);
+        // dd($orders);
         return $orders; 
     }
 }

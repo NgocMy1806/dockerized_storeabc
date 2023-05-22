@@ -387,8 +387,14 @@ class EcController extends Controller
     {
         $userName = session()->get('userName');
         $orders = $this->ecService->getOrderHistory($id);
-
-        return view('mypage', compact('userName', 'orders'));
+// dd($orders);
+        return view('user.mypage', 
+        [
+            'userName'=>$userName,
+             'orders'=>  $orders ,
+            'watchCategories' => $this->watchCategories,
+            'bagCategories' => $this->bagCategories,
+        ]);
     }
 
 }
