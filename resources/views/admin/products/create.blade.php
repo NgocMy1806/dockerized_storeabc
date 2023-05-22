@@ -78,11 +78,12 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Select tags</label>
-                                        <select class="form-control select2-tags" style="width: 100%;" name="tags[]">
-
-                                            {{-- @foreach ($childCategories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endforeach --}}
+                                        <select class="form-control select2-tags" style="width: 100%;" name="tags[]" multiple>
+                                            @foreach ($tags as $tag)
+                                                <option value="{{ $tag->id }}" >
+                                                    {{ $tag->name }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
 

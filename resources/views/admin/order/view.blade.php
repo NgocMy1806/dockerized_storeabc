@@ -13,6 +13,10 @@
                                     <td>{{ $order->id }}</td>
                                 </tr>
                                 <tr>
+                                    <th>Order date time</th>
+                                    <td>{{ $order->created_at }}</td>
+                                </tr>
+                                <tr>
                                     <th>Total amount</th>
                                     <td>$ {{ $order->total_amount }}</td>
                                 </tr>

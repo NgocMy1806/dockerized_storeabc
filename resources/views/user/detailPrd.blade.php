@@ -56,8 +56,7 @@
                     <div class="clearfix"></div>
                 </div>
                 <a href="{{ route('AddToCart', $product->id) }}"
-                    class="btn btn-primary btn-normal btn-inline btn_form button item_add item_1 add-to-cart" data-product-id="{{ $product->id }}"target="_self">Add to
-                    cart</a>
+                    class="btn btn-primary btn-normal btn-inline btn_form button item_add item_1 add-to-cart" data-product-id="{{ $product->id }}"target="_self">Add to cart</a>
             </div>
             <div class="clearfix"> </div>
         </div>
@@ -106,46 +105,20 @@
     </div>
     <div class="col-md-3 tabs">
         <h3 class="m_1">Related Products</h3>
+        @foreach($relatedProducts as $relatedProduct)
         <ul class="product">
-            <li class="product_img"><img src="images/m5.jpg" class="img-responsive" alt="" /></li>
+            <li class="product_img"><img src="{{ asset('storage/thumbnail/' . $relatedProduct->thumbnail->name) }}" class="img-responsive" alt="thumbnail" /></li>
             <li class="product_desc">
-                <h4><a href="#">quod mazim</a></h4>
-                <p class="single_price">$66.30</p>
+                <h4><a href="{{ route('detailPrd', $relatedProduct->id) }}">{{$relatedProduct->name}}</a></h4>
+                <p class="single_price">$ {{$relatedProduct->price}}</p>
                 <a href="#" class="link-cart">Add to Wishlist</a>
-                <a href="#" class="link-cart">Add to Cart</a>
+                <a href="{{ route('AddToCart', $relatedProduct->id) }}"
+                    class="link-cart item_add item_1 add-to-cart" data-product-id="{{ $relatedProduct->id }}"target="_self">Add to cart</a>
             </li>
             <div class="clearfix"> </div>
         </ul>
-        <ul class="product">
-            <li class="product_img"><img src="images/m6.jpg" class="img-responsive" alt="" /></li>
-            <li class="product_desc">
-                <h4><a href="#">quod mazim</a></h4>
-                <p class="single_price">$66.30</p>
-                <a href="#" class="link-cart">Add to Wishlist</a>
-                <a href="#" class="link-cart">Add to Cart</a>
-            </li>
-            <div class="clearfix"> </div>
-        </ul>
-        <ul class="product">
-            <li class="product_img"><img src="images/m2.jpg" class="img-responsive" alt="" /></li>
-            <li class="product_desc">
-                <h4><a href="#">quod mazim</a></h4>
-                <p class="single_price">$66.30</p>
-                <a href="#" class="link-cart">Add to Wishlist</a>
-                <a href="#" class="link-cart">Add to Cart</a>
-            </li>
-            <div class="clearfix"> </div>
-        </ul>
-        <ul class="product">
-            <li class="product_img"><img src="images/m3.jpg" class="img-responsive" alt="" /></li>
-            <li class="product_desc">
-                <h4><a href="#">quod mazim</a></h4>
-                <p class="single_price">$66.30</p>
-                <a href="#" class="link-cart">Add to Wishlist</a>
-                <a href="#" class="link-cart">Add to Cart</a>
-            </li>
-            <div class="clearfix"> </div>
-        </ul>
+        @endforeach
+        
     </div>
     <div class="clearfix"> </div>
     </div>

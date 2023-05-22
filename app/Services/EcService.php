@@ -59,7 +59,7 @@ public function getBagCategories()
 }
     public function getTop3HotProducts()
     {
-        return Product::where('is_hot', 1)->take(3)->with('thumbnail')->get();
+        return Product::where('is_hot', 1)->orderBy('created_at', 'DESC')->take(3)->with('thumbnail')->get();
     }
     public function getAllHotProducts()
     {
@@ -146,6 +146,7 @@ public function getBagCategories()
                 $query->whereBetween('price', [$price_range[0], $price_range[1]]);
             }
         }
+        $query->orderBy('created_at', 'DESC');
         //  return $query->paginate(10);
         $result = [
             'products' => $query->paginate(9),
