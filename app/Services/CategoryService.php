@@ -5,7 +5,8 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Redis;
 
-class CategoryService extends BaseService
+// class CategoryService extends BaseService
+class CategoryService 
 {
     public function getAllCategory()
     {

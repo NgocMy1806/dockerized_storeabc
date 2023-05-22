@@ -11,7 +11,7 @@ use Throwable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-class TagService extends BaseService
+class TagService 
 {
     public function store($name){
         $tag=Tag::create([

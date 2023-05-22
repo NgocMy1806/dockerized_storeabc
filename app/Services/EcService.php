@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redis;
 
 
-class EcService extends BaseService
+class EcService 
 {
     public function getWatchCategories()
     {
