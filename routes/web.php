@@ -24,6 +24,7 @@ Route::get('/admin', function () {
 
 // route user 
 Route::get('/oauth2/idpresponse', [AuthController::class,'handleCognitoCallback'])->name('handleCognitoCallback');
+Route::get('/callback', [AuthController::class, 'handleALBCallback'])->name('handleALBCallback');
 
 Route::get('/login', [AuthController::class,'getFormLogin'])->name('getFormLogin');
 Route::get('/logout', [AuthController::class,'logout'])->name('logout');

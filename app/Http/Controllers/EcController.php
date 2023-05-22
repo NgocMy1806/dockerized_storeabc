@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 
@@ -394,13 +395,15 @@ class EcController extends Controller
 
     public function getMypage($id)
     {
-        $userName = session()->get('userName');
+        // $userName = session()->get('userName');
+        $user=Customer::find($id);
         $orders = $this->ecService->getOrderHistory($id);
 // dd($orders);
         return view('user.mypage', 
         [
-            'userName'=>$userName,
+            // 'userName'=>$userName,
              'orders'=>  $orders ,
+             'user'=>$user,
             'watchCategories' => $this->watchCategories,
             'bagCategories' => $this->bagCategories,
         ]);

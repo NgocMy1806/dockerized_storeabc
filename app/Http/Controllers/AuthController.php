@@ -98,6 +98,26 @@ class AuthController extends Controller
         }
     }
 
+    public function handleALBCallback(Request $request)
+{
+    // Retrieve user information from ALB headers
+    $accessToken = $request->header('x-amzn-oidc-accesstoken');
+    $identity = $request->header('x-amzn-oidc-identity');
+    $userData = json_decode(base64_decode($request->header('x-amzn-oidc-data')), true);
+
+    // Extract user details from the user claims
+    $userName = $userData['name'];
+    $userEmail = $userData['email'];
+
+    // Store the user information in the session or perform any other necessary actions
+    session()->put('accessToken', $accessToken);
+    session()->put('userName', $userName);
+    session()->put('userEmail', $userEmail);
+
+    // Redirect the user to the desired page
+    return redirect('/dashboard');
+}
+
     public function logout(Request $request)
     {
         $request->session()->invalidate();
