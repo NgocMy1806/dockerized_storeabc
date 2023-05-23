@@ -32,7 +32,7 @@
             <p>Your cart is empty</p>
         @endif
         <br>
-        <h1>Delivery information</h1> {{ $user->name }}
+        <h1>Delivery information</h1> 
         <form method="POST" action="{{ route('checkout') }}">
             @csrf
             <div class="form-group row">
@@ -59,7 +59,7 @@
                         <option value="">-- Select Country --</option>
                         @foreach ($countries as $country)
                             <option value="{{ $country->id }}"
-                                {{ $country->id === $user->country_id ? 'selected' : '' }}>
+                                {{ $country->id == $user->country_id ? 'selected' : '' }}>
                                 {{ $country->country_name }}</option>
                         @endforeach
                     </select>
@@ -70,7 +70,7 @@
                 <div class="col-sm-4">
                     <select id="state" class="form-control @error('state') is-invalid @enderror" name="state" required>
                         <option value="">-- Select State --</option>
-                        @if (isset($user) && $state->id === $user->state_id)
+                        @if (isset($user) )
                             <option value="{{  $user->state_id }}" selected>{{ $user->state->state_name }}</option>
                         @endif
                     </select>
@@ -83,6 +83,9 @@
                 <div class="col-sm-4">
                     <select id="city" class="form-control @error('city') is-invalid @enderror" name="city" required>
                         <option value="">-- Select City --</option>
+                        @if (isset($user) )
+                        <option value="{{  $user->city_id }}" selected>{{ $user->city->city_name }}</option>
+                    @endif
                     </select>
                 </div>
 
@@ -90,7 +93,7 @@
 
                 <div class="col-sm-4">
                     <input id="address" type="text" class="form-control @error('address') is-invalid @enderror"
-                        name="address_bottom" value="{{ old('address') }}" required>
+                        name="address_bottom"  value={{ $user ? $user->address_bottom : '' }}  required>
                 </div>
 
                 <label for="payment_method" class="col-sm-2 col-form-label text-md-right">Payment method</label>
