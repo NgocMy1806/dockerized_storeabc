@@ -70,8 +70,8 @@
                 <div class="col-sm-4">
                     <select id="state" class="form-control @error('state') is-invalid @enderror" name="state" required>
                         <option value="">-- Select State --</option>
-                        @if (isset($state) && $state->id === $user->state_id)
-                            <option value="{{ $state->id }}" selected>{{ $state->state_name }}</option>
+                        @if (isset($user) && $state->id === $user->state_id)
+                            <option value="{{  $user->state_id }}" selected>{{ $user->state->state_name }}</option>
                         @endif
                     </select>
                 </div>
