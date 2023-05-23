@@ -30,8 +30,10 @@
     <div class="header_top_right">
         <ul class="header_user_info">
                 @if(session()->has('userName'))
+                <span class="user_desc" style="color:aliceblue">Hello  {{session()->get('userName')}}</span>
                 <a class="login mypage" href="{{ route('mypage', ['id' => session()->get('userId')]) }}">
                     <i class="user"> </i>
+             
                 <li class="user_desc">My Account</li>
                 @else
                 <a class="login" href="{{route('getFormLogin')}}">

@@ -165,6 +165,7 @@ class StripePaymentController extends Controller
       // Clear the cart in the session
       Session::forget('cart');
       Session::forget('total');
+      Session::forget('totalQuantity');
 
       // Send the order confirmation email
       Mail::to($customer->email)->send(new OrderSuccessMail($customer, $order));
@@ -237,6 +238,7 @@ class StripePaymentController extends Controller
       // Clear the cart in the session
       Session::forget('cart');
       Session::forget('total');
+      Session::forget('totalQuantity');
 
       // Send the order confirmation email
       Mail::to($customer->email)->send(new OrderSuccessMail($customer, $order));

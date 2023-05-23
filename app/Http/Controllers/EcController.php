@@ -354,6 +354,13 @@ class EcController extends Controller
 
         $countries = Country::all();
         //dd($countries);
+        $user='';
+        if(session()->has('userId'))
+        {
+            $id=session()->get('userId');
+            $user= Customer::with('country', 'state', 'city')->find($id);
+        }
+        
         return view(
             'user.checkout',
             [
@@ -362,7 +369,7 @@ class EcController extends Controller
                 'cart' => $cart,
                 'total' =>  $total,
                 'countries' => $countries,
-
+                'user'=>$user
             ]
         );
     }
@@ -396,7 +403,8 @@ class EcController extends Controller
     public function getMypage($id)
     {
         // $userName = session()->get('userName');
-        $user=Customer::find($id);
+        $user = Customer::with('country', 'state', 'city')->find($id);
+
         $orders = $this->ecService->getOrderHistory($id);
 // dd($orders);
         return view('user.mypage', 

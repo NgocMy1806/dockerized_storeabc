@@ -32,21 +32,22 @@
             <p>Your cart is empty</p>
         @endif
         <br>
-        <h1>Delivery information</h1>
+        <h1>Delivery information</h1> {{ $user->name }}
         <form method="POST" action="{{ route('checkout') }}">
             @csrf
             <div class="form-group row">
                 <label class="col-sm-2" for="name">Name</label>
                 <div class="col-sm-4">
-                    <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}"
-                        required>
+                    <input id="name" type="text" class="form-control" name="name" {{-- required value={{session()->has('userId')?session()->get('userName'):''}}> --}}
+                        {{-- required value={{$user?$user->name :''}}> --}} required
+                        @if ($user) value={{ $user->name }} @else value='' @endif>
                 </div>
 
 
                 <label class="col-sm-2" for="email">Email Address</label>
                 <div class="col-sm-4">
-                    <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}"
-                        required>
+                    <input id="email" type="email" class="form-control" name="email"
+                        value={{ $user ? $user->email : '' }} required>
                 </div>
             </div>
             <div class="form-group row">
@@ -57,20 +58,24 @@
                         required>
                         <option value="">-- Select Country --</option>
                         @foreach ($countries as $country)
-                            <option value="{{ $country->id }}">{{ $country->country_name }}</option>
+                            <option value="{{ $country->id }}"
+                                {{ $country->id === $user->country_id ? 'selected' : '' }}>
+                                {{ $country->country_name }}</option>
                         @endforeach
                     </select>
                 </div>
 
-
                 <label for="state" class="col-sm-2 col-form-label text-md-right">{{ __('State') }}</label>
 
                 <div class="col-sm-4">
-                    <select id="state" class="form-control @error('state') is-invalid @enderror" name="state"
-                        required>
+                    <select id="state" class="form-control @error('state') is-invalid @enderror" name="state" required>
                         <option value="">-- Select State --</option>
+                        @if (isset($state) && $state->id === $user->state_id)
+                            <option value="{{ $state->id }}" selected>{{ $state->state_name }}</option>
+                        @endif
                     </select>
                 </div>
+
             </div>
             <div class="form-group row">
                 <label for="city" class="col-sm-2 col-form-label text-md-right">{{ __('City') }}</label>
