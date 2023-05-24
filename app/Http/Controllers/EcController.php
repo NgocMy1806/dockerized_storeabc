@@ -354,7 +354,7 @@ class EcController extends Controller
 
         $countries = Country::all();
         //dd($countries);
-        $user='';
+        $user=null;
         if(session()->has('userId'))
         {
             $id=session()->get('userId');

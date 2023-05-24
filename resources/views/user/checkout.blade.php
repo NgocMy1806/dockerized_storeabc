@@ -38,9 +38,9 @@
             <div class="form-group row">
                 <label class="col-sm-2" for="name">Name</label>
                 <div class="col-sm-4">
-                    <input id="name" type="text" class="form-control" name="name" {{-- required value={{session()->has('userId')?session()->get('userName'):''}}> --}}
-                        {{-- required value={{$user?$user->name :''}}> --}} required
-                        @if ($user) value={{ $user->name }} @else value='' @endif>
+                    <input id="name" type="text" class="form-control" name="name"
+                       required
+                        @if ($user) value="{{ $user->name }}" @else value='' @endif>
                 </div>
 
 
@@ -59,7 +59,7 @@
                         <option value="">-- Select Country --</option>
                         @foreach ($countries as $country)
                             <option value="{{ $country->id }}"
-                                {{ $country->id == $user->country_id ? 'selected' : '' }}>
+                                {{ isset($user) && $country->id === $user->country_id ? 'selected' : '' }}>
                                 {{ $country->country_name }}</option>
                         @endforeach
                     </select>
@@ -93,7 +93,7 @@
 
                 <div class="col-sm-4">
                     <input id="address" type="text" class="form-control @error('address') is-invalid @enderror"
-                        name="address_bottom"  value={{ $user ? $user->address_bottom : '' }}  required>
+                        name="address_bottom"  value="{{ $user ? $user->address_bottom : '' }} " required>
                 </div>
 
                 <label for="payment_method" class="col-sm-2 col-form-label text-md-right">Payment method</label>
@@ -102,7 +102,7 @@
                         <input class="form-check-input" type="radio" name="payment_method" id="payment_method_stripe"
                             value="stripe" checked>
                         <label class="form-check-label" for="payment_method_stripe">
-                            Stripe
+                            Credit card
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
