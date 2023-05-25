@@ -47,7 +47,7 @@
                 <label class="col-sm-2" for="email">Email Address</label>
                 <div class="col-sm-4">
                     <input id="email" type="email" class="form-control" name="email"
-                        value={{ $user ? $user->email : '' }} required>
+                        value="{{ $user ? $user->email : '' }} "required>
                 </div>
             </div>
             <div class="form-group row">

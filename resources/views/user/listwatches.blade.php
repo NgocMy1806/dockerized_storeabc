@@ -12,7 +12,8 @@
                         data-category-id="{{ $watchCategory->id }}">
                         {{ $watchCategory->name }}
                     </a>
-                    <span class="count">({{ $watchCategory->products_count }})</span>
+                    {{-- <span class="count">({{ $watchCategory->products_count }})</span> --}}
+                    <span class="count">({{  $products_count[$watchCategory->id] }})</span>
                 </li>
             @endforeach
 
