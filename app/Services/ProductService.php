@@ -268,7 +268,6 @@ class ProductService
             //     }
             // }
 
-
             $product->delete();
             DB::commit();
             return true;
@@ -276,5 +275,24 @@ class ProductService
             DB::rollBack();
             dd($th);
         }
+    }
+
+
+    public function changeHotStatus($id, $is_hot)
+    {
+        $product= Product::find($id);
+        $product->update([
+            'is_hot'=> $is_hot
+        ]);
+        return true;
+    }
+    
+    public function changeActiveStatus($id, $is_active)
+    {
+        $product= Product::find($id);
+        $product->update([
+            'is_active'=> $is_active
+        ]);
+        return true;
     }
 }

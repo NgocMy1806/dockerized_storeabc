@@ -112,11 +112,11 @@
                                                 <td>{{ $product->category->name ?? '' }}</td>
                                                 <td><input type="checkbox"
                                                         data-url="{{ route('products.update', $product->id) }}"
-                                                        name="is_active" class="toggle-active" id="toggle-is-active"
+                                                        name="is_active" class="toggle-active toggle-is-active" id="toggle-is-active"
                                                         {{ $product->is_active == 1 ? 'checked' : '' }}></td>
                                                 <td><input type="checkbox"
                                                         data-url="{{ route('products.update', $product->id) }}"
-                                                        name="is_hot" class="toggle-active" id="toggle-is-hot"
+                                                        name="is_hot" class="toggle-active toggle-is-hot" id="toggle-is-hot"
                                                         {{ $product->is_hot === 1 ? 'checked' : '' }}></td>
                                                 <td>
                                                     <a href="{{ route('products.edit', $product->id) }}"
@@ -208,9 +208,7 @@
                 });
 
 
-
-
-                $('#toggle-is-hot').on('click', function() {
+                $('.toggle-is-hot').on('click', function() {
                     const url = $(this).data('url');
                     console.log($(this).is(':checked'));
                     $.ajax({
@@ -218,7 +216,7 @@
                         url: url,
                         data: {
                             _token: '{{ csrf_token() }}',
-                            is_active: $(this).is(':checked') ? 1 : 0,
+                            is_hot: $(this).is(':checked') ? 1 : 2,
                         },
                         dataType: 'json',
                         success: function(data) {
@@ -227,6 +225,25 @@
                     });
                 })
             })
+            $(document).ready(function() {
+                $('.toggle-is-active').on('change', function() {
+                    const url = $(this).data('url');
+                    console.log($(this).is(':checked'));
+                    $.ajax({
+                        type: "PUT",
+                        url: url,
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            is_active: $(this).is(':checked') ? 1 : 2, // phải để 2 vì nếu để 0 thì if ($request->is_active)  sẽ return false
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            toastr.success(data.success)
+                        }
+                    });
+                });
+            });
+
             $(document).ready(function() {
                 $('.product-filter').on('change', function() {
                     console.log('hi');

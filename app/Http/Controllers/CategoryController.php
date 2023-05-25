@@ -87,12 +87,13 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     { 
         if($request->ajax()){
-           
-            $this->categoryService->changeStatus($id,$request);
+            $status = $request->status == '1' ? '1' : '0';;
+            $this->categoryService->changeStatus($id,$status);
 
             return response()->json([
-                'success'=>"change status OK",
+                'success'=>"change status successfully",
             ]);
+           
         }
         $this->categoryService->update($request,$id);
         return redirect ()->route('categories.index')->with ('success', 'edit successfully');
