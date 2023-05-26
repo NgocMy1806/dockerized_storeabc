@@ -11,7 +11,7 @@ use Throwable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-class EcService extends BaseService
+class EcService
 {
     public function getWatchCategories()
     {

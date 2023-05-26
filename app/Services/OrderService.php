@@ -12,7 +12,7 @@ use Throwable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-class OrderService extends BaseService
+class OrderService
 
 {
 public function getOrders(){

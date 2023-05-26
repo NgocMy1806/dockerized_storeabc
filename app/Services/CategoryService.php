@@ -4,7 +4,7 @@ namespace App\Services;
 use App\Models\Category;
 use Illuminate\Support\Str;
 
-class CategoryService extends BaseService
+class CategoryService 
 {
     public function getAllCategory()
     {
