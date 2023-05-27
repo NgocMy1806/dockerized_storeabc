@@ -131,9 +131,7 @@ class ProductService
                 'is_hot' => !isset($request->is_hot) ? 0 : 1,
             ]);
             $id = $product->id;
-            // dd($id);
 
-            
             if ($request->has('tags')) {
                 $selectedTags = $request->input('tags');
 
@@ -145,9 +143,7 @@ class ProductService
                         'slug' => Str::slug($tag),
                     ]);
                     $tagIds[] = $tagModel->id;
-                    
                 }
-
                 $product->tags()->sync($tagIds);
             }
 
@@ -191,13 +187,9 @@ class ProductService
 
     public function update($id, $request)
     {
-
         try {
             DB::beginTransaction();
             $product = Product::find((int) $id);
-
-            // dd($request->category_id);
-
             $product->update([
                 'name' => $request->name,
                 'slug' => Str::slug($request->name),
@@ -222,20 +214,28 @@ class ProductService
             }
 
             if ($request->has('tags')) {
-                $selectedTags = $request->input('tags');
-
+                $selectedTags = $request->input('tags'); //get selected tag id
+                // dd($selectedTags);
+                // Get the existing tag IDs
+                $existingTagIds = Tag::whereIn('id', $selectedTags)->pluck('id')->all();
+                // dd( $existingTagIds);
                 // Create new tags if they don't exist
-                $tagIds = [];
-                foreach ($selectedTags as $tag) {
-                    $tagModel = Tag::firstOrCreate([
-                        'name' => $tag,
-                        'slug' => Str::slug($tag),
+                $newTags = array_diff($selectedTags, $existingTagIds);
+                // dd ($newTags);
+                foreach ($newTags as $newTag) {
+
+                    $tagModel = new Tag([
+                        'name' => $newTag,
+                        'slug' => Str::slug($newTag),
                     ]);
-                    $tagIds[] = $tagModel->id;
-                    
+                    $tagModel->save();
+                    $existingTagIds[] = $tagModel->id;
                 }
 
-                $product->tags()->sync($tagIds);
+                $product->tags()->sync($existingTagIds);
+            } else {
+                // If no tags were selected, remove all tags from the product
+                $product->tags()->sync([]);
             }
 
             DB::commit();
@@ -280,18 +280,18 @@ class ProductService
 
     public function changeHotStatus($id, $is_hot)
     {
-        $product= Product::find($id);
+        $product = Product::find($id);
         $product->update([
-            'is_hot'=> $is_hot
+            'is_hot' => $is_hot
         ]);
         return true;
     }
-    
+
     public function changeActiveStatus($id, $is_active)
     {
-        $product= Product::find($id);
+        $product = Product::find($id);
         $product->update([
-            'is_active'=> $is_active
+            'is_active' => $is_active
         ]);
         return true;
     }
