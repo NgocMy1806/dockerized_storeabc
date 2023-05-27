@@ -168,7 +168,7 @@
                     url: url,
                     data: {
                         _token: '{{ csrf_token() }}',
-                        is_active: $(this).is(':checked') ? 1 : 0,
+                        status: $(this).is(':checked') ? 1 : 0,
                     },
                     dataType: 'json',
                     success: function(data)

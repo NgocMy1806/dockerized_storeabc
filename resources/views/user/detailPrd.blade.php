@@ -103,6 +103,7 @@
             </div>
         </div>
     </div>
+    @if($relatedProducts->isNotEmpty())
     <div class="col-md-3 tabs">
         <h3 class="m_1">Related Products</h3>
         @foreach($relatedProducts as $relatedProduct)
@@ -120,6 +121,7 @@
         @endforeach
         
     </div>
+    @endif
     <div class="clearfix"> </div>
     </div>
 @endsection

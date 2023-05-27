@@ -106,12 +106,13 @@ class CategoryService
     
     } 
 
-    public function changeStatus($id, $request){
+    public function changeStatus($id, $status){
        $category= Category::find($id);
        $category->update([
-        'status'=>$request->status?1:0,
+        'status'=>$status,
        ]);
        return true;
+       
     }
     // public function destroy($id)
     // {

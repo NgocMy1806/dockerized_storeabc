@@ -31,6 +31,7 @@ class EcController extends Controller
         $this->ecService = $ecService;
         $this->watchCategories = $this->ecService->getWatchCategories();
         $this->bagCategories = $this->ecService->getBagCategories();
+       
     }
 
 
@@ -63,6 +64,8 @@ class EcController extends Controller
         $result = $this->ecService->getListPrd($request,$parentCategory);
         $products = $result['products'];
         $prd_count = $result['prd_count'];
+        $products_count = $result['products_count'];
+        // dd($products_count);
         // $products = $this->ecService->getListBags($request);
         if ($request->ajax()) {
             return view(
@@ -74,7 +77,7 @@ class EcController extends Controller
                     'sort_key' => $request->sort_key,
                     'price_range' => $request->price_range,
                     'prd_count' => $prd_count,
-                   
+                   'products_count'=>$products_count
                 ]
             )->render();
         }
@@ -87,7 +90,8 @@ class EcController extends Controller
                 'sort_key' => $request->sort_key ? $request->sort_key : null,
                 'price_range' => $request->price_range ? $request->price_range : null,
                 'prd_count' => $prd_count,
-                'parentCategory' =>$parentCategory
+                'parentCategory' =>$parentCategory,
+                'products_count'=>$products_count
             ]
         );
     }
@@ -98,7 +102,7 @@ class EcController extends Controller
         $products = $result['products'];
         $prd_count = $result['prd_count'];
         $active_category_id = $category;
-    
+        $products_count = $result['products_count'];
         if ($request->ajax()) {
             return view('user.listPrdByCateAjax', [
                 'watchCategories' => $this->watchCategories,
@@ -108,6 +112,7 @@ class EcController extends Controller
                 'price_range' => $request->price_range,
                 'prd_count' => $prd_count,
                 'active_category_id' => $active_category_id, 
+                'products_count'=>$products_count
             ])->render();
         }
     
@@ -119,6 +124,7 @@ class EcController extends Controller
             'price_range' => $request->price_range ? $request->price_range : null,
             'prd_count' => $prd_count,
             'active_category_id' => $active_category_id, 
+            'products_count'=>$products_count
         ]);
     }
     
@@ -129,6 +135,7 @@ class EcController extends Controller
         $result = $this->ecService->getListPrd($request, $parentCategory);
         $products = $result['products'];
         $prd_count = $result['prd_count'];
+        $products_count = $result['products_count'];
         // $products = $this->ecService->getListBags($request);
         if ($request->ajax()) {
             return view(
@@ -140,7 +147,7 @@ class EcController extends Controller
                     'sort_key' => $request->sort_key,
                     'price_range' => $request->price_range,
                     'prd_count' => $prd_count,
-                    
+                    'products_count'=>$products_count
                 ]
             )->render();
         }
@@ -152,7 +159,8 @@ class EcController extends Controller
                 'products' => $products,
                 'sort_key' => $request->sort_key ? $request->sort_key : null,
                 'price_range' => $request->price_range ? $request->price_range : null,
-                'prd_count' => $prd_count
+                'prd_count' => $prd_count,
+                'products_count'=>$products_count
             ]
         );
     }
@@ -164,7 +172,7 @@ class EcController extends Controller
         $products = $result['products'];
         $prd_count = $result['prd_count'];
         $active_category_id = $category;
-    
+        $products_count = $result['products_count'];
         if ($request->ajax()) {
             return view('user.listPrdByCateAjax', [
                 'watchCategories' => $this->watchCategories,
@@ -174,6 +182,7 @@ class EcController extends Controller
                 'price_range' => $request->price_range,
                 'prd_count' => $prd_count,
                 'active_category_id' => $active_category_id, 
+                'products_count'=>$products_count
             ])->render();
         }
     
@@ -185,6 +194,7 @@ class EcController extends Controller
             'price_range' => $request->price_range ? $request->price_range : null,
             'prd_count' => $prd_count,
             'active_category_id' => $active_category_id, 
+            'products_count'=>$products_count
         ]);
     }
     public function getDetailPrd($id)
