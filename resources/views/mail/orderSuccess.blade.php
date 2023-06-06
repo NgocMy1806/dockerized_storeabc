@@ -36,13 +36,15 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <p>Total: $ {{ $order->total_amount }}</p>
+                        <p><b>Total: $ {{ $order->total_amount }} </b></p>
                     </div>
                     <p>Thank you for shopping with us.</p>
                 </div>
             </div>
         </div>
     </div>
+
+
 
 </body>
 

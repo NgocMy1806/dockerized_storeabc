@@ -11,6 +11,7 @@ class Customer extends Model
     protected $fillable=[
         'name',
         'email',
+        'cognito_id',
         'email_verified_at',
         'password',
         'country_id',
@@ -26,5 +27,15 @@ class Customer extends Model
 public function country()
 {
     return $this->belongsTo(Country::class);
+}
+
+public function state()
+{
+    return $this->belongsTo(State::class);
+}
+
+public function city()
+{
+    return $this->belongsTo(City::class);
 }
 }

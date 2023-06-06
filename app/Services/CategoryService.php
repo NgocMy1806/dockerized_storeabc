@@ -3,8 +3,10 @@
 namespace App\Services;
 use App\Models\Category;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Redis;
 
-class CategoryService extends BaseService
+// class CategoryService extends BaseService
+class CategoryService 
 {
     public function getAllCategory()
     {
@@ -29,7 +31,26 @@ class CategoryService extends BaseService
             'status' => $request->status?1:0,
             'parent_id' => $request->parent_id??0,
         ]);
-      
+        //if admin add new watch category, sys will clear cache of watch category in redis
+        if($request->parent_id==2)
+        {
+            $cacheKey = 'watch_categories';
+            if (Redis::exists($cacheKey))
+            {
+                Redis::del($cacheKey);
+            }
+        }
+ //if admin add new bag category, sys will clear cache of bag category in redis
+        if($request->parent_id==1)
+        {
+            $cacheKey = 'bag_categories';
+            if (Redis::exists($cacheKey))
+            {
+                Redis::del($cacheKey);
+            }
+        }
+
+       
         return $category;
     }
 
@@ -38,7 +59,7 @@ class CategoryService extends BaseService
     }
 
     public function update($request,$id){
-    // dd ($id);
+    
         Category::find($id)
         ->update([
             'name' => $request->name??null,
@@ -46,23 +67,52 @@ class CategoryService extends BaseService
             'status' => $request->status?1:0,
             'parent_id' => $request->parent_id??0,
         ]);
-
+  //if admin add new watch category, sys will clear cache of watch category in redis
+  if($request->parent_id==2)
+  {
+      $cacheKey = 'watch_categories';
+      if (Redis::exists($cacheKey))
+      {
+          Redis::del($cacheKey);
+      }
+  }
+//if admin add new bag category, sys will clear cache of bag category in redis
+  if($request->parent_id==1)
+  {
+      $cacheKey = 'bag_categories';
+      if (Redis::exists($cacheKey))
+      {
+          Redis::del($cacheKey);
+      }
+  }
     }
+
     public function destroy ($id) {
-    //    return Category::withTrashed()
-    //     ->where('id', $id)
-    //     ->get();
     $category = Category::findOrFail($id);
+    if ($category->parent_id == 1) {
+        $cacheKey = 'bag_categories';
+        if (Redis::exists($cacheKey)) {
+            Redis::del($cacheKey);
+        }
+    }
+    if ($category->parent_id == 2) {
+        $cacheKey = 'watch_categories';
+        if (Redis::exists($cacheKey)) {
+            Redis::del($cacheKey);
+        }
+    }
+
     $category->delete();
     
     } 
 
-    public function changeStatus($id, $request){
+    public function changeStatus($id, $status){
        $category= Category::find($id);
        $category->update([
-        'status'=>$request->status?1:0,
+        'status'=>$status,
        ]);
        return true;
+       
     }
     // public function destroy($id)
     // {

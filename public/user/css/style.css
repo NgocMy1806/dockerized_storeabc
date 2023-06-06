@@ -37,6 +37,7 @@ body a{
 	min-height:800px;
 	text-align: center;
 	padding-top:1em;
+	background-position: calc(50% - 28px) center;
 }
 .header_top_left{
 	float:left;

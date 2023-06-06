@@ -12,12 +12,12 @@ use Throwable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-class OrderService extends BaseService
+class OrderService 
 
 {
 public function getOrders(){
     
-    return Order::with('customer')->paginate(10);
+    return Order::with('customer')->orderby('created_at', 'DESC')->paginate(10);
 }
 
 public function getOrderDetail($id)

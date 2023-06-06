@@ -12,7 +12,8 @@
                         data-category-id="{{ $bagCategory->id }}">
                         {{ $bagCategory->name }}
                     </a>
-                    <span class="count">({{ $bagCategory->products_count }})</span>
+                    {{-- <span class="count">({{ $bagCategory->products_count }})</span> --}}
+                    <span class="count">({{  $products_count[$bagCategory->id] }})</span>
                 </li>
             @endforeach
 

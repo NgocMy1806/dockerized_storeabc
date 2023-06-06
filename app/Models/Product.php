@@ -28,7 +28,7 @@ class Product extends Model
         return $this->morphOne(Media::class,'mediable')->where('type','thumbnail');
     }
     public function images(){
-        return $this->morphMany(Media::class,'mediable')->where('type','images');
+        return $this->morphMany(Media::class,'mediable')->where('type','product_image');
     }
     public function tags(){
         return $this->belongsToMany(Tag::class,'product_tags','product_id','tag_id');

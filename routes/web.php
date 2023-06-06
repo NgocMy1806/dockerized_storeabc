@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EcController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StripePaymentController;
 
 /*
@@ -22,11 +23,17 @@ Route::get('/admin', function () {
 
 
 // route user 
-Route::get('login.html', function () {
-    echo 'View user login';
-});
+//Route::get('/oauth2/idpresponse', [AuthController::class,'handleCognitoCallback'])->name('handleCognitoCallback');
+Route::get('/oauth2/idpresponse', [AuthController::class,'handleALBCallback'])->name('handleCognitoCallback');
+Route::get('/callback', [AuthController::class, 'handleALBCallback'])->name('handleALBCallback');
+
+Route::get('/login', [AuthController::class,'getFormLogin'])->name('getFormLogin');
+Route::get('/logout', [AuthController::class,'logout'])->name('logout');
+Route::get('/mypage/{id}', [ECController::class,'getMypage'])->name('mypage');
+Route::get('/receipt/{id}', [ECController::class,'getReceipt'])->name('receipt');
 
 Route::get('/', [EcController::class, 'index'])->name('index');
+Route::get('/index', [EcController::class, 'index'])->name('index');
 
 Route::get('/cart', [EcController::class, 'showCart'])->name('showCart');
 

@@ -12,14 +12,18 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
+use App\Models\Customer;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class EcController extends Controller
 {
     private $productService;
     private $categoryService;
-    private $ecService;
+    public $ecService;
     public $watchCategories;
     public $bagCategories;
+    
     public function __construct(ProductService $productService, CategoryService $categoryService, EcService $ecService)
     {
         $this->productService = $productService;
@@ -27,6 +31,7 @@ class EcController extends Controller
         $this->ecService = $ecService;
         $this->watchCategories = $this->ecService->getWatchCategories();
         $this->bagCategories = $this->ecService->getBagCategories();
+       
     }
 
 
@@ -42,7 +47,6 @@ class EcController extends Controller
         $cart = session()->get('cart');
         $total = session()->get('total');
 
-
         return view(
             'user.index',
             [
@@ -55,10 +59,13 @@ class EcController extends Controller
 
     public function getListBags(Request $request)
     {
+       
         $parentCategory=1;
         $result = $this->ecService->getListPrd($request,$parentCategory);
         $products = $result['products'];
         $prd_count = $result['prd_count'];
+        $products_count = $result['products_count'];
+        // dd($products_count);
         // $products = $this->ecService->getListBags($request);
         if ($request->ajax()) {
             return view(
@@ -70,7 +77,7 @@ class EcController extends Controller
                     'sort_key' => $request->sort_key,
                     'price_range' => $request->price_range,
                     'prd_count' => $prd_count,
-                   
+                   'products_count'=>$products_count
                 ]
             )->render();
         }
@@ -83,7 +90,8 @@ class EcController extends Controller
                 'sort_key' => $request->sort_key ? $request->sort_key : null,
                 'price_range' => $request->price_range ? $request->price_range : null,
                 'prd_count' => $prd_count,
-                'parentCategory' =>$parentCategory
+                'parentCategory' =>$parentCategory,
+                'products_count'=>$products_count
             ]
         );
     }
@@ -94,7 +102,7 @@ class EcController extends Controller
         $products = $result['products'];
         $prd_count = $result['prd_count'];
         $active_category_id = $category;
-    
+        $products_count = $result['products_count'];
         if ($request->ajax()) {
             return view('user.listPrdByCateAjax', [
                 'watchCategories' => $this->watchCategories,
@@ -104,6 +112,7 @@ class EcController extends Controller
                 'price_range' => $request->price_range,
                 'prd_count' => $prd_count,
                 'active_category_id' => $active_category_id, 
+                'products_count'=>$products_count
             ])->render();
         }
     
@@ -115,6 +124,7 @@ class EcController extends Controller
             'price_range' => $request->price_range ? $request->price_range : null,
             'prd_count' => $prd_count,
             'active_category_id' => $active_category_id, 
+            'products_count'=>$products_count
         ]);
     }
     
@@ -125,6 +135,7 @@ class EcController extends Controller
         $result = $this->ecService->getListPrd($request, $parentCategory);
         $products = $result['products'];
         $prd_count = $result['prd_count'];
+        $products_count = $result['products_count'];
         // $products = $this->ecService->getListBags($request);
         if ($request->ajax()) {
             return view(
@@ -136,7 +147,7 @@ class EcController extends Controller
                     'sort_key' => $request->sort_key,
                     'price_range' => $request->price_range,
                     'prd_count' => $prd_count,
-                    
+                    'products_count'=>$products_count
                 ]
             )->render();
         }
@@ -148,7 +159,8 @@ class EcController extends Controller
                 'products' => $products,
                 'sort_key' => $request->sort_key ? $request->sort_key : null,
                 'price_range' => $request->price_range ? $request->price_range : null,
-                'prd_count' => $prd_count
+                'prd_count' => $prd_count,
+                'products_count'=>$products_count
             ]
         );
     }
@@ -160,7 +172,7 @@ class EcController extends Controller
         $products = $result['products'];
         $prd_count = $result['prd_count'];
         $active_category_id = $category;
-    
+        $products_count = $result['products_count'];
         if ($request->ajax()) {
             return view('user.listPrdByCateAjax', [
                 'watchCategories' => $this->watchCategories,
@@ -170,6 +182,7 @@ class EcController extends Controller
                 'price_range' => $request->price_range,
                 'prd_count' => $prd_count,
                 'active_category_id' => $active_category_id, 
+                'products_count'=>$products_count
             ])->render();
         }
     
@@ -181,13 +194,22 @@ class EcController extends Controller
             'price_range' => $request->price_range ? $request->price_range : null,
             'prd_count' => $prd_count,
             'active_category_id' => $active_category_id, 
+            'products_count'=>$products_count
         ]);
     }
     public function getDetailPrd($id)
     {
-        $product = Product::where('id', $id)->with(['tags', 'thumbnail'])->first();
-        $images = $this->productService->getImages($id);
-
+        $product = Product::where('id', $id)->with(['tags', 'thumbnail', 'images'])->first();
+        $images = $product->images;
+        $relatedProducts = Product::whereHas('tags', function ($query) use ($product) {
+            $query->whereIn('tags.id', $product->tags->pluck('id'));
+        })
+        ->where('products.id', '!=', $id)
+        ->with(['tags', 'thumbnail'])
+        ->orderBy('products.created_at', 'DESC')
+        ->limit(4)
+        ->get();
+        
         return view(
             'user.detailPrd',
             [
@@ -195,6 +217,7 @@ class EcController extends Controller
                 'images' => $images,
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
+                'relatedProducts'=>$relatedProducts
             ]
         );
     }
@@ -341,6 +364,13 @@ class EcController extends Controller
 
         $countries = Country::all();
         //dd($countries);
+        $user=null;
+        if(session()->has('userId'))
+        {
+            $id=session()->get('userId');
+            $user= Customer::with('country', 'state', 'city')->find($id);
+        }
+        
         return view(
             'user.checkout',
             [
@@ -349,7 +379,7 @@ class EcController extends Controller
                 'cart' => $cart,
                 'total' =>  $total,
                 'countries' => $countries,
-
+                'user'=>$user
             ]
         );
     }
@@ -377,6 +407,23 @@ class EcController extends Controller
             'products' => $products,
             'keyword' => $request->keyword,
             'countResult' => $countResult
+        ]);
+    }
+
+    public function getMypage($id)
+    {
+        // $userName = session()->get('userName');
+        $user = Customer::with('country', 'state', 'city')->find($id);
+
+        $orders = $this->ecService->getOrderHistory($id);
+// dd($orders);
+        return view('user.mypage', 
+        [
+            // 'userName'=>$userName,
+             'orders'=>  $orders ,
+             'user'=>$user,
+            'watchCategories' => $this->watchCategories,
+            'bagCategories' => $this->bagCategories,
         ]);
     }
 
