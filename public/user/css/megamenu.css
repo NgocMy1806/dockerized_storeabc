@@ -61,7 +61,7 @@ skyblue .megapanel img:hover,.skyblue form.contact input[type="text"]:focus,.sky
 @media(max-width:768px){
 	.megamenu>li{display:block;width:100%;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box}
 	.megamenu>li:hover,.megamenu>li.active{border-top:0}
-	.megamenu>li>a{padding:10px 20px;border-bottom:solid 1px #fff;}
+	.megamenu>li>a{padding:10px 20px;border-bottom:solid 1px #fff;font-weight: 600;}
 	.megamenu>li:hover>a,.megamenu>li.active>a{padding:10px 20px;}
 	.megamenu a{width:100%;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box}
 	.megamenu .dropdown,.megamenu .dropdown li .dropdown{width:100%;display:none;left:0;border-left:0;position:static;border:0;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box}
@@ -96,5 +96,6 @@ skyblue .megapanel img:hover,.skyblue form.contact input[type="text"]:focus,.sky
 @media(max-width:768px){
 .megamenu>li>a {
   font-size:1em;
+  font-weight: 600;
 }
 }

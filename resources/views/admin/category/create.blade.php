@@ -22,7 +22,7 @@
                 <div class="form-check">
                     <input name="status" class="form-check-input" type="checkbox" id="status" {{ isset($category->status)&&$category->status == 1 ? 'checked':''}}>
                     <label class="form-label" for="status">
-                        Status
+                        Is active
                     </label>
                 </div>
                 <div class="form-group">
@@ -41,6 +41,7 @@
                 <button type="button" class="btn btn-secondary" href="{{route('categories.index')}}">back</button>
             </div>
         </form>
+        
     </div>
 </div>
 @endsection

@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Throwable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Tag;
 
-class ProductService 
+class ProductService
 
 {
     private $tagService;
@@ -52,7 +53,7 @@ class ProductService
         if ($request->sort_key == 'price_down') {
             $query->orderBy('price', 'DESC');
         }
-
+        $query->orderBy('created_at', 'DESC');
         return $query->paginate(10);
     }
 
@@ -83,33 +84,31 @@ class ProductService
     public function store_thumb($id, $request)
     {
         $product = Product::find((int) $id);
-     
-            $fileName = Carbon::now()->format('H_i_s') . '-' . $request->file('thumbnail')->getClientOriginalName();
-            Media::create([
-                'mediable_type' => Product::class,
-                'mediable_id' => $product->id,
-                'type' => 'thumbnail',
-                'name' => $fileName,
-            ]);
-            $request->file('thumbnail')->storeAs('public/thumbnail', $fileName);
-        
+
+        $fileName = Carbon::now()->format('H_i_s') . '-' . $request->file('thumbnail')->getClientOriginalName();
+        Media::create([
+            'mediable_type' => Product::class,
+            'mediable_id' => $product->id,
+            'type' => 'thumbnail',
+            'name' => $fileName,
+        ]);
+        $request->file('thumbnail')->storeAs('public/thumbnail', $fileName);
     }
     public function store_images($id, $request)
     {
         $product = Product::find((int) $id);
-       
-            foreach ($request->images as $image) {
-                $fileName = Carbon::now()->format('H_i_s') . '-' . $image->getClientOriginalName();
-                Media::create([
-                    'mediable_type' => Product::class,
-                    'mediable_id' => $product->id,
-                    'type' => 'product_image',
-                    'name' => $fileName,
-                ]);
 
-                $image->storeAs('public/images', $fileName);
-            }
-        
+        foreach ($request->images as $image) {
+            $fileName = Carbon::now()->format('H_i_s') . '-' . $image->getClientOriginalName();
+            Media::create([
+                'mediable_type' => Product::class,
+                'mediable_id' => $product->id,
+                'type' => 'product_image',
+                'name' => $fileName,
+            ]);
+
+            $image->storeAs('public/images', $fileName);
+        }
     }
     public function store($request)
     {
@@ -132,20 +131,21 @@ class ProductService
                 'is_hot' => !isset($request->is_hot) ? 0 : 1,
             ]);
             $id = $product->id;
-            // dd($id);
 
-            $tag = [];
-            if (isset($request->tags)) {
-                foreach ($request->tags as $tag) {
-                    if (is_numeric($tag)) {
-                        $tags[] = $tag;
-                    } else {
-                        $newTag = $this->tagService->store($tag);
-                        $tags[] = $newTag->id;
-                    }
+            if ($request->has('tags')) {
+                $selectedTags = $request->input('tags');
+
+                // Create new tags if they don't exist
+                $tagIds = [];
+                foreach ($selectedTags as $tag) {
+                    $tagModel = Tag::firstOrCreate([
+                        'name' => $tag,
+                        'slug' => Str::slug($tag),
+                    ]);
+                    $tagIds[] = $tagModel->id;
                 }
+                $product->tags()->sync($tagIds);
             }
-            $product->tags()->sync($tags);
 
             $this->store_thumb($id, $request);
             $this->store_images($id, $request);
@@ -168,12 +168,11 @@ class ProductService
             Storage::disk('public')->delete('thumbnail/' . $product->thumbnail->name);
             $product->thumbnail->delete();
         }
-       
     }
     public function del_images($id)
     {
         $product = Product::find($id);
-       
+
         $images = Media::where([['mediable_id', $id], ['mediable_type', 'App\Models\Product'], ['type', 'product_image']])->get();
         if (!empty($images)) {
             // dd($product->images);
@@ -188,13 +187,9 @@ class ProductService
 
     public function update($id, $request)
     {
-
         try {
             DB::beginTransaction();
             $product = Product::find((int) $id);
-
-            // dd($request->category_id);
-          
             $product->update([
                 'name' => $request->name,
                 'slug' => Str::slug($request->name),
@@ -209,7 +204,7 @@ class ProductService
             ]);
 
             if ($request->hasFile('thumbnail')) {
-                // dd('co file');
+                // dd('has file');
                 $this->del_Thumb($id);
                 $this->store_thumb($id, $request);
             }
@@ -217,6 +212,32 @@ class ProductService
                 $this->del_images($id);
                 $this->store_images($id, $request);
             }
+
+            if ($request->has('tags')) {
+                $selectedTags = $request->input('tags'); //get selected tag id
+                // dd($selectedTags);
+                // Get the existing tag IDs
+                $existingTagIds = Tag::whereIn('id', $selectedTags)->pluck('id')->all();
+                // dd( $existingTagIds);
+                // Create new tags if they don't exist
+                $newTags = array_diff($selectedTags, $existingTagIds);
+                // dd ($newTags);
+                foreach ($newTags as $newTag) {
+
+                    $tagModel = new Tag([
+                        'name' => $newTag,
+                        'slug' => Str::slug($newTag),
+                    ]);
+                    $tagModel->save();
+                    $existingTagIds[] = $tagModel->id;
+                }
+
+                $product->tags()->sync($existingTagIds);
+            } else {
+                // If no tags were selected, remove all tags from the product
+                $product->tags()->sync([]);
+            }
+
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
@@ -247,7 +268,6 @@ class ProductService
             //     }
             // }
 
-
             $product->delete();
             DB::commit();
             return true;
@@ -255,5 +275,24 @@ class ProductService
             DB::rollBack();
             dd($th);
         }
+    }
+
+
+    public function changeHotStatus($id, $is_hot)
+    {
+        $product = Product::find($id);
+        $product->update([
+            'is_hot' => $is_hot
+        ]);
+        return true;
+    }
+
+    public function changeActiveStatus($id, $is_active)
+    {
+        $product = Product::find($id);
+        $product->update([
+            'is_active' => $is_active
+        ]);
+        return true;
     }
 }

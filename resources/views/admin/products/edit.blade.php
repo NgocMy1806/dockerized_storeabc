@@ -38,9 +38,9 @@
                                         data-target="#general" type="button" role="tab" aria-controls="#general"
                                         aria-selected="true">Basic information</button>
                                     <button class="nav-link" id="advanced_tab" data-toggle="tab" data-target="#advanced"
-                                        type="button" role="tab" aria-controls="advanced"
-                                        aria-selected="false">Detail information</button>
-                                   
+                                        type="button" role="tab" aria-controls="advanced" aria-selected="false">Detail
+                                        information</button>
+
                                 </div>
                             </nav>
                             {{-- cardbody --}}
@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Select category</label>
-                                        <select class="form-control select2" name="category_id"  style="width: 100%;">
+                                        <select class="form-control select2" name="category_id" style="width: 100%;">
                                             <option>Select category</option>
                                             @foreach ($childCategories as $category)
                                                 <option {{ $category->id === $product->category->id ? 'selected' : '' }}
@@ -78,17 +78,27 @@
                                             @endforeach
                                         </select>
                                     </div>
-
-                                    <div class="form-group">
+                                    {{-- for product detail screen --}}
+                                    {{-- <div class="form-group">
                                         <label>Select tags</label>
                                         <select class="form-control select2-tags" style="width: 100%;" name="tags[]" multiple>
-
                                             @foreach ($product->tags as $tag)
                                                 <option value="{{ $tag->id }}" selected> {{ $tag->name }}</option>
                                             @endforeach
                                         </select>
-                                    </div>
+                                    </div> --}}
 
+                                    <div class="form-group">
+                                        <label>Select tags</label>
+                                        <select class="form-control select2-tags" style="width: 100%;" name="tags[]" multiple>
+                                            @foreach ($tags as $tag)
+                                                <option value="{{ $tag->id }}" {{ in_array($tag->id, $product->tags->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                                    {{ $tag->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    
 
                                     <div class="form-check">
                                         <input type="checkbox" name="is_hot" class="form-check-input" id="is_hot"
@@ -147,20 +157,18 @@
 
                                     <div class="form-group">
                                         <label for="description">Description</label>
-                                        
+
                                         @php
                                             $description = $product->description ?? '';
                                         @endphp
-                                        <textarea class="form-control tinymce" id="description" rows="1"
-                                            name='description'>{{$description}}</textarea>
+                                        <textarea class="form-control tinymce" id="description" rows="1" name='description'>{{ $description }}</textarea>
                                     </div>
                                     <div class="form-group">
                                         @php
                                             $content = $product->content ?? '';
                                         @endphp
                                         <label for="content">content</label>
-                                        <textarea class="form-control tinymce" id="content" rows="3"
-                                            name='content'>{{$content}}</textarea>
+                                        <textarea class="form-control tinymce" id="content" rows="3" name='content'>{{ $content }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -211,6 +219,51 @@
                 }
             })
         })
-        // $('.select2').select2();
+        $('.select2').select2();
+        $('.select2-tags').select2({
+            multiple: true,
+            tags: true,
+            delay: 500,
+            ajax: {
+                url: '{{route('tags.searchTag')}}',
+                dataType: 'json',
+                perPage: 9,
+                // data gửi lên server 
+                data: function(params) {
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1
+                    }
+
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                // nội dung xử lí, biến data trong function bên dưới này là data sever trả về
+                processResults: function(data, params) {
+                    params.page = params.page || 1;
+
+                    let results = [];
+
+                    console.log(data.data);
+
+                    for (const tag of data.data) {
+                        results.push({
+                            id: tag.id,
+                            text: tag.name,
+                        })
+                        console.log(tag);
+                    }
+
+                    return {
+                        results: results,
+                        pagination: {
+                            more: (params.page * 9) < data.total
+                        }
+                    };
+                }
+                
+            }
+
+        });
     </script>
 @endpush

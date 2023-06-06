@@ -110,7 +110,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            Are you sure you want to delete category: <b class="text-danger" id="title"></b>
+                            Are you sure you want to delete this category</b>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-danger">Yes</button>
@@ -138,8 +138,7 @@
                         <input type="hidden" name="id"value="">
                         <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary deletebutton2"
-                                id="deletebutton2">Delete</button>
+                            <button type="button" class="btn btn-primary deletebutton2" id="deletebutton2">Delete</button>
                         </div>
                     </form>
                 </div>
@@ -151,33 +150,33 @@
 
     @push('custom-js')
         <script>
-             $(document).ready(function () {
-            $('.delete-button').on('click', (e) => {
-                const title = $(e.target).data('title')
-                const link = $(e.target).data('link')
+            $(document).ready(function() {
+                $('.delete-button').on('click', function(event) {
+                    event.preventDefault();
 
-                $('#title').html(title)
-                $('#delete-form').attr('action', link)
-            })
-            $('.toggle-active').on('click', function () {
-                const url = $(this).data('url');
-                // console.log(url);
-                console.log($(this).is(':checked'));
-                $.ajax({
-                    type: "PUT",
-                    url: url,
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        is_active: $(this).is(':checked') ? 1 : 0,
-                    },
-                    dataType: 'json',
-                    success: function(data)
-                    {
-                        toastr.success(data.success)
-                    }
+                    var link = $(this).data('link');
+                    console.log(link);
+                    $('#delete-form').attr('action', link);
+
                 });
-            })
-        })
-            </script>
 
+                $('.toggle-active').on('click', function() {
+                    const url = $(this).data('url');
+                    // console.log(url);
+                    console.log($(this).is(':checked'));
+                    $.ajax({
+                        type: "PUT",
+                        url: url,
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            status: $(this).is(':checked') ? 1 : 0,
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            toastr.success(data.success)
+                        }
+                    });
+                })
+            })
+        </script>
     @endpush

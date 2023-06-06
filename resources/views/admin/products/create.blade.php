@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">product create</h1>
+                    <h1 class="m-0">Create product</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -78,11 +78,12 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Select tags</label>
-                                        <select class="form-control select2-tags" style="width: 100%;" name="tags[]">
-
-                                            {{-- @foreach ($childCategories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endforeach --}}
+                                        <select class="form-control select2-tags" style="width: 100%;" name="tags[]" multiple>
+                                            @foreach ($tags as $tag)
+                                                <option value="{{ $tag->id }}" >
+                                                    {{ $tag->name }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
 

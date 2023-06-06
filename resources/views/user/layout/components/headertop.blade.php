@@ -29,12 +29,30 @@
     </div>
     <div class="header_top_right">
         <ul class="header_user_info">
-            <a class="login" href="login.html">
-                <i class="user"> </i>
+                @if(session()->has('userName'))
+                <span class="user_desc" style="color:aliceblue">Hello  {{session()->get('userName')}}</span>
+                <a class="login mypage" href="{{ route('mypage', ['id' => session()->get('userId')]) }}">
+                    <i class="user"> </i>
+             
                 <li class="user_desc">My Account</li>
+                @else
+                <a class="login" href="{{route('getFormLogin')}}">
+                    <i class="user"> </i>
+                <li class="user_desc">Login</li>
+                @endif
             </a>
             <div class="clearfix"> </div>
         </ul>
+        @if(session()->has('userName'))
+        <ul class="header_user_info">
+            <a class="logout" href="{{route('logout')}}">
+                <i class="user"> </i>
+                <li class="user_desc">Log out</li>
+            </a>
+            <div class="clearfix"> </div>
+        </ul>
+       @endif
+
         <!-- start search-->
         <div class="search-box">
             <div id="sb-search" class="sb-search">

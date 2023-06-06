@@ -32,21 +32,22 @@
             <p>Your cart is empty</p>
         @endif
         <br>
-        <h1>Delivery information</h1>
+        <h1>Delivery information</h1> 
         <form method="POST" action="{{ route('checkout') }}">
             @csrf
             <div class="form-group row">
                 <label class="col-sm-2" for="name">Name</label>
                 <div class="col-sm-4">
-                    <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}"
-                        required>
+                    <input id="name" type="text" class="form-control" name="name"
+                       required
+                        @if ($user) value="{{ $user->name }}" @else value='' @endif>
                 </div>
 
 
                 <label class="col-sm-2" for="email">Email Address</label>
                 <div class="col-sm-4">
-                    <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}"
-                        required>
+                    <input id="email" type="email" class="form-control" name="email"
+                        value="{{ $user ? $user->email : '' }} "required>
                 </div>
             </div>
             <div class="form-group row">
@@ -57,20 +58,24 @@
                         required>
                         <option value="">-- Select Country --</option>
                         @foreach ($countries as $country)
-                            <option value="{{ $country->id }}">{{ $country->country_name }}</option>
+                            <option value="{{ $country->id }}"
+                                {{ isset($user) && $country->id === $user->country_id ? 'selected' : '' }}>
+                                {{ $country->country_name }}</option>
                         @endforeach
                     </select>
                 </div>
 
-
                 <label for="state" class="col-sm-2 col-form-label text-md-right">{{ __('State') }}</label>
 
                 <div class="col-sm-4">
-                    <select id="state" class="form-control @error('state') is-invalid @enderror" name="state"
-                        required>
+                    <select id="state" class="form-control @error('state') is-invalid @enderror" name="state" required>
                         <option value="">-- Select State --</option>
+                        @if (isset($user) )
+                            <option value="{{  $user->state_id }}" selected>{{ $user->state->state_name }}</option>
+                        @endif
                     </select>
                 </div>
+
             </div>
             <div class="form-group row">
                 <label for="city" class="col-sm-2 col-form-label text-md-right">{{ __('City') }}</label>
@@ -78,6 +83,9 @@
                 <div class="col-sm-4">
                     <select id="city" class="form-control @error('city') is-invalid @enderror" name="city" required>
                         <option value="">-- Select City --</option>
+                        @if (isset($user) )
+                        <option value="{{  $user->city_id }}" selected>{{ $user->city->city_name }}</option>
+                    @endif
                     </select>
                 </div>
 
@@ -85,7 +93,7 @@
 
                 <div class="col-sm-4">
                     <input id="address" type="text" class="form-control @error('address') is-invalid @enderror"
-                        name="address_bottom" value="{{ old('address') }}" required>
+                        name="address_bottom"  value="{{ $user ? $user->address_bottom : '' }} " required>
                 </div>
 
                 <label for="payment_method" class="col-sm-2 col-form-label text-md-right">Payment method</label>
@@ -94,7 +102,7 @@
                         <input class="form-check-input" type="radio" name="payment_method" id="payment_method_stripe"
                             value="stripe" checked>
                         <label class="form-check-label" for="payment_method_stripe">
-                            Stripe
+                            Credit card
                         </label>
                     </div>
                     <div class="form-check form-check-inline">

@@ -55,7 +55,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </head>
 
 <body>
-    <div class="banner" style="min-height:341.510px">
+    <div class="banner" style="min-height:341.510px; margin-bottom: 40px;">
         <div class="container">
             @include('user.layout.components.headertop')
             <div class="header_bottom">
