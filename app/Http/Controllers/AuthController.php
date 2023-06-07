@@ -21,7 +21,7 @@ class AuthController extends Controller
 
         session()->put('previousUrl', $currentUrl);
         if(env('APP_ENV')=='local')
-        {
+        { 
         $loginUrl = env('COGNITO_LOGIN_URL');
         return redirect($loginUrl);
         }
