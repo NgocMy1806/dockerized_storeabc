@@ -8,6 +8,8 @@ use App\Models\Customer;
 use Illuminate\Support\Str;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
@@ -21,7 +23,7 @@ class AuthController extends Controller
 
         session()->put('previousUrl', $currentUrl);
         if(env('APP_ENV')=='local')
-        {
+        { 
         $loginUrl = env('COGNITO_LOGIN_URL');
         return redirect($loginUrl);
         }
@@ -167,27 +169,30 @@ class AuthController extends Controller
 
 }
 
-    public function logout(Request $request)
+   public function logout(Request $request)
     {
         $request->session()->invalidate();
         $clientId = env('COGNITO_CLIENT_ID');
         $logoutUrl = env('COGNITO_LOGOUT_URL');
         $logoutRedirectUri = env('COGNITO_LOGOUT_REDIRECT_URI');
         $requestUrl = "{$logoutUrl}?client_id={$clientId}&redirect_uri={$logoutRedirectUri}";
+        // dd($requestUrl);
         // call logout endpoint
-        $response = Http::get($requestUrl);
-        // $response = Http::get('https://local-sys.auth.us-east-1.amazoncognito.com/logout?
-        // client_id=29489jnimj6qsn84qsoku63unh&
-        // logout_uri=http://localhost:8000');
+       // $response = Http::get($requestUrl);
+   
+
+// Delete ALB cookies
+    $response = new Response();
+    $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-0', null, -1));
+    $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-1', null, -1));
+  $response->withCookie(Cookie::make('AWSALBAuthNonce', null, -1));
+
+    // Call logout endpoint
+    $response->setStatusCode(302);
+    $response->header('Location', $requestUrl);
+   return redirect('/index');
+}
 
  
-        if ($response->successful()) {
-          
-            // return redirect($logoutRedirectUri);
-            return redirect('http://localhost:8000/index');
-        } else {
-           
-            return redirect()->back()->with('error', 'Logout failed. Please try again.');
-        }
-    }
+       
 }
