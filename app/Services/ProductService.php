@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 use Illuminate\Support\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Tag;
 
@@ -92,7 +93,11 @@ class ProductService
             'type' => 'thumbnail',
             'name' => $fileName,
         ]);
-        $request->file('thumbnail')->storeAs('public/thumbnail', $fileName);
+        //save local server:  $request->file('thumbnail')->storeAs('public/thumbnail', $fileName);
+        $filePath = 'thumbs/' . $fileName;
+        $path = Storage::disk('s3')->put($filePath, file_get_contents($request->file('thumbnail')));
+        
+        // $path = Storage::disk('s3')->url($path);
     }
     public function store_images($id, $request)
     {
@@ -107,7 +112,10 @@ class ProductService
                 'name' => $fileName,
             ]);
 
-            $image->storeAs('public/images', $fileName);
+            // $image->storeAs('public/images', $fileName);
+            $filePath = 'images/' . $fileName;
+            $path = Storage::disk('s3')->put($filePath, file_get_contents($image));
+            // $path = Storage::disk('s3')->url($path);
         }
     }
     public function store($request)
@@ -165,7 +173,7 @@ class ProductService
     {
         $product = Product::find($id);
         if (!empty($product->thumbnail)) {
-            Storage::disk('public')->delete('thumbnail/' . $product->thumbnail->name);
+            Storage::disk('s3')->delete('thumbs/' . $product->thumbnail->name);
             $product->thumbnail->delete();
         }
     }
@@ -178,7 +186,7 @@ class ProductService
             // dd($product->images);
             foreach ($images as $image) {
                 // dd($image->name);
-                Storage::disk('public')->delete('images/' . $image->name);
+                Storage::disk('s3')->delete('images/' . $image->name);
                 $image->delete();
             }
         }

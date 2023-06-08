@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Throwable;
 use Illuminate\Support\Facades\Mail;
 use App\Services\EcService;
+use Illuminate\Support\Facades\Storage;
 
 
 class StripePaymentController extends Controller
@@ -86,7 +87,7 @@ class StripePaymentController extends Controller
           'unit_amount' => $item['price'] * 100, // Stripe requires the price in cents
           'product_data' => [
             'name' => $item['name'],
-            'images' => [asset('storage/thumbnail/' .  $item['thumbnail'])]
+            'images' => [Storage::disk('s3')->temporaryUrl("thumbs"."/".  $item['thumbnail'], '+2 minutes') ]
           ],
         ],
         'quantity' => $item['quantity'],

@@ -101,7 +101,8 @@
                                                 <td>
                                                     @if ($product->thumbnail)
                                                         <img
-                                                            class="img-thumbnail" width="200" height="150"src="{{ asset('storage/thumbnail/' . $product->thumbnail->name) }}">
+                                                            {{-- class="img-thumbnail" width="200" height="150"src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $product->thumbnail->name, '+2 minutes')  }}"> --}}
+                                                            class="img-thumbnail" width="200" height="150"src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $product->thumbnail->name, '+2 minutes')  }}">
                                                     @else
                                                         <img
                                                             class="img-thumbnail" width="250" height="250"src="{{ asset('img/default/thumbnail-default.jpg') }}">

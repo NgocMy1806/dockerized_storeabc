@@ -6,12 +6,12 @@
                 <div class="labout span_1_of_a1">
                     <div class="flexslider">
                         <ul class="slides">
-                            <li data-thumb="{{ asset('storage/thumbnail/' . $product->thumbnail->name) }}">
-                                <img src="{{ asset('storage/thumbnail/' . $product->thumbnail->name) }}" />
+                            <li data-thumb="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $product->thumbnail->name, '+2 minutes') }}">
+                                <img src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $product->thumbnail->name, '+2 minutes')  }}" />
                             </li>
                             @foreach ($images as $image)
-                                <li data-thumb="{{ asset('storage/images/' . $image->name) }}">
-                                    <img src="{{ asset('storage/images/' . $image->name) }}" alt="">
+                                <li data-thumb="{{Storage::disk('s3')->temporaryUrl("images"."/". $image->name, '+2 minutes')  }}">
+                                    <img src="{{ Storage::disk('s3')->temporaryUrl("images"."/". $image->name, '+2 minutes')  }}"  alt="">
                     
                     @endforeach
                     </ul>
@@ -108,7 +108,7 @@
         <h3 class="m_1">Related Products</h3>
         @foreach($relatedProducts as $relatedProduct)
         <ul class="product">
-            <li class="product_img"><img src="{{ asset('storage/thumbnail/' . $relatedProduct->thumbnail->name) }}" class="img-responsive" alt="thumbnail" /></li>
+            <li class="product_img"><img src="{{ Storage::disk('s3')->temporaryUrl("images"."/". $relatedProduct->thumbnail->name, '+2 minutes')  }}" class="img-responsive" alt="thumbnail" /></li>
             <li class="product_desc">
                 <h4><a href="{{ route('detailPrd', $relatedProduct->id) }}">{{$relatedProduct->name}}</a></h4>
                 <p class="single_price">$ {{$relatedProduct->price}}</p>
