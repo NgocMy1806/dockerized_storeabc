@@ -10,7 +10,7 @@
                             <div class="inner_content clearfix">
                                 <div class="product_image">
                                     <div class="mask1">
-                                        <img src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $product->thumbnail->name, '+2 minutes')  }}"alt="image"
+                                        <img src="{{ $product->thumbnail->url  }}"alt="image"
                                             class="img-responsive zoom-img">
                                     </div>
 

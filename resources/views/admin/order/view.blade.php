@@ -71,7 +71,7 @@
                                         @foreach ($orderDetails as $item)
                                             <tr>
                                                 <td><img width="50" height="50"
-                                                        class="img-thumbnail"src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $item->product->thumbnail->name) }}">
+                                                        class="img-thumbnail"src="{{  $product->thumbnail->url }}">
                                                 </td>
                                                 <td>{{ $item->product->name }}</td>
                                                 <td>{{ $item->price }}</td>

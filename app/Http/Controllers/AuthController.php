@@ -22,14 +22,11 @@ class AuthController extends Controller
         //Mjk0ODlqbmltajZxc244NHFzb2t1NjN1bmg6NnEzdmVnbnUwbGxzcG0wZGgxcDd2YjRjc25rdjA3ZTNwaWgyOGY1OWFqMTI1Z3BwMTk=
 
         session()->put('previousUrl', $currentUrl);
-        if(env('APP_ENV')=='local')
-        { 
-        $loginUrl = env('COGNITO_LOGIN_URL');
-        return redirect($loginUrl);
-        }
-        else
-        {
-        return redirect()->route('handleALBCallback');
+        if (env('APP_ENV') == 'local') {
+            $loginUrl = env('COGNITO_LOGIN_URL');
+            return redirect($loginUrl);
+        } else {
+            return redirect()->route('handleALBCallback');
         }
     }
 
@@ -37,7 +34,7 @@ class AuthController extends Controller
     {
         try {
             $code = $request->query('code');
-            
+
             //get access token
             $credentials = base64_encode(env('COGNITO_CLIENT_ID') . ':' . env('COGNITO_CLIENT_SECRET'));
             $tokenUrl = env('COGNITO_TOKEN_URL');
@@ -58,7 +55,7 @@ class AuthController extends Controller
             $body = $tokenResponse->body();
             // dump($status, $body);
             $accessToken = $tokenResponse->json()['access_token'];
-           
+
             //get user infor by userinfor endpoint
             $userInforUrl = env('COGNITO_USERINFO_URL');
             $userData = Http::withHeaders([
@@ -75,13 +72,11 @@ class AuthController extends Controller
                 if (!$customer) {
                     // Customer does not exist, create a new record
                     $customer = Customer::create([
-                        'name'=> $userName,
+                        'name' => $userName,
                         'email' => $userEmail,
-                        'cognito_id' => $cognitoId, 
+                        'cognito_id' => $cognitoId,
                     ]);
-                }
-                elseif(isset($customer) && $customer->cognito_id ==null)
-                {
+                } elseif (isset($customer) && $customer->cognito_id == null) {
                     $customer->update([
                         'cognito_id' => $cognitoId,
                     ]);
@@ -110,66 +105,62 @@ class AuthController extends Controller
     }
 
     public function handleALBCallback(Request $request)
-{
-     // Retrieve user information from ALB headers
-    $accessToken = $request->header('x-amzn-oidc-accesstoken');
-    $identity = $request->header('x-amzn-oidc-identity');
-    $encodedJwt = $request->header('x-amzn-oidc-data');
+    {
+        // Retrieve user information from ALB headers
+        $accessToken = $request->header('x-amzn-oidc-accesstoken');
+        $identity = $request->header('x-amzn-oidc-identity');
+        $encodedJwt = $request->header('x-amzn-oidc-data');
 
-    // Step 1: Get the key ID from JWT headers (the kid field)
-    $jwtHeaders = explode('.', $encodedJwt)[0];
-    $decodedJwtHeaders = base64_decode($jwtHeaders);
-    $decodedJson = json_decode($decodedJwtHeaders, true);
-    $kid = $decodedJson['kid'];
+        // Step 1: Get the key ID from JWT headers (the kid field)
+        $jwtHeaders = explode('.', $encodedJwt)[0];
+        $decodedJwtHeaders = base64_decode($jwtHeaders);
+        $decodedJson = json_decode($decodedJwtHeaders, true);
+        $kid = $decodedJson['kid'];
 
-    // Step 2: Get the public key from the regional endpoint
-    $region = 'us-east-1';
-    $url = "https://public-keys.auth.elb.$region.amazonaws.com/$kid";
-    $response = Http::get($url);
-    $pubKey = $response->body();
+        // Step 2: Get the public key from the regional endpoint
+        $region = 'us-east-1';
+        $url = "https://public-keys.auth.elb.$region.amazonaws.com/$kid";
+        $response = Http::get($url);
+        $pubKey = $response->body();
 
- //step3
- $algorithms='ES256';
- $payload = JWT::decode($encodedJwt, new Key($pubKey, $algorithms));
-// dump($payload);
- $userName = $payload->name;
- $cognitoId = $payload->sub;
- $userEmail = $payload->email; 
+        //step3
+        $algorithms = 'ES256';
+        $payload = JWT::decode($encodedJwt, new Key($pubKey, $algorithms));
+        // dump($payload);
+        $userName = $payload->name;
+        $cognitoId = $payload->sub;
+        $userEmail = $payload->email;
 
-               //cognito ID
-                $customer = Customer::where('email', $userEmail)->first();
+        //cognito ID
+        $customer = Customer::where('email', $userEmail)->first();
 
-                if (!$customer) {
-                    // Customer does not exist, create a new record
-                    $customer = Customer::create([
-                        'name'=> $userName,
-                        'email' => $userEmail,
-                        'cognito_id' => $cognitoId, 
-                    ]);
-                }
-                elseif(isset($customer) && $customer->cognito_id ==null)
-                {
-                    $customer->update([
-                        'cognito_id' => $cognitoId,
-                    ]);
-                }
+        if (!$customer) {
+            // Customer does not exist, create a new record
+            $customer = Customer::create([
+                'name' => $userName,
+                'email' => $userEmail,
+                'cognito_id' => $cognitoId,
+            ]);
+        } elseif (isset($customer) && $customer->cognito_id == null) {
+            $customer->update([
+                'cognito_id' => $cognitoId,
+            ]);
+        }
 
-                $userId = $customer->id;
-                // dd($userId);
-                session()->put('userName', $userName);
-                session()->put('userId', $userId);
-                // Use the access token for further requests or store it in the session
-                if (session()->has('previousUrl')) {
-                    $previousUrl = session()->pull('previousUrl');
-                    return redirect($previousUrl);
-                } else {
-                    return redirect('/index');
-                }
+        $userId = $customer->id;
+        // dd($userId);
+        session()->put('userName', $userName);
+        session()->put('userId', $userId);
+        // Use the access token for further requests or store it in the session
+        if (session()->has('previousUrl')) {
+            $previousUrl = session()->pull('previousUrl');
+            return redirect($previousUrl);
+        } else {
+            return redirect('/index');
+        }
+    }
 
-
-}
-
-   public function logout(Request $request)
+    public function logout(Request $request)
     {
         $request->session()->invalidate();
         $clientId = env('COGNITO_CLIENT_ID');
@@ -177,23 +168,21 @@ class AuthController extends Controller
         $logoutRedirectUri = env('COGNITO_LOGOUT_REDIRECT_URI');
         $requestUrl = "{$logoutUrl}?client_id={$clientId}&redirect_uri={$logoutRedirectUri}";
         // dd($requestUrl);
-          if(env('APP_ENV')=='local'){
-               $response = Http::get($requestUrl);
-          }else{
-      
-// Delete ALB cookies
-    $response = new Response();
-    $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-0', null, -1));
-    $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-1', null, -1));
-  $response->withCookie(Cookie::make('AWSALBAuthNonce', null, -1));
+        if (env('APP_ENV') == 'local') {
+            $response = Http::get($requestUrl);
+            return redirect('/index');
+        } else {
 
-    // Call logout endpoint
-    $response->setStatusCode(302);
-    $response->header('Location', $requestUrl);
-   return redirect('/index');
-          }
-}
+            // Delete ALB cookies
+            $response = new Response();
+            $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-0', null, -1));
+            $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-1', null, -1));
+            $response->withCookie(Cookie::make('AWSALBAuthNonce', null, -1));
 
- 
-       
+            // Call logout endpoint
+            $response->setStatusCode(302);
+            $response->header('Location', $requestUrl);
+            return redirect('/index');
+        }
+    }
 }

@@ -120,7 +120,8 @@
                                     <div class="preview_thumb row">
                                         @if ($product->thumbnail)
                                             <div class="col-md-3 h-100"><img class="w-100 h-100"
-                                                src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $product->thumbnail->name, '+2 minutes')  }}"
+                                              {{-- src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $product->thumbnail->name, '+2 minutes')  }}" --}}
+                                                src="{{  $product->thumbnail->url }}"
                                                     alt=""></div>
                                             {{-- @else
                                         <img
@@ -139,7 +140,7 @@
                                     <div class="preview row">
                                         @foreach ($images as $image)
                                             <div class="col-md-3 h-100"><img class="w-100 h-100"
-                                                src="{{ Storage::disk('s3')->temporaryUrl("images"."/". $image->name, '+2 minutes')  }}" alt="">
+                                                src="{{ $image->url  }}" alt="">
                                             </div>
                                         @endforeach
                                     </div>

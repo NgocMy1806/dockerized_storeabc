@@ -95,7 +95,9 @@ class ProductService
         ]);
         //save local server:  $request->file('thumbnail')->storeAs('public/thumbnail', $fileName);
         $filePath = 'thumbs/' . $fileName;
-        $path = Storage::disk('s3')->put($filePath, file_get_contents($request->file('thumbnail')));
+        // dd($filePath);
+        // $path = Storage::disk('s3')->put($filePath, file_get_contents($request->file('thumbnail')));
+        $path = Storage::put($filePath, file_get_contents($request->file('thumbnail')));
         
         // $path = Storage::disk('s3')->url($path);
     }
@@ -114,7 +116,7 @@ class ProductService
 
             // $image->storeAs('public/images', $fileName);
             $filePath = 'images/' . $fileName;
-            $path = Storage::disk('s3')->put($filePath, file_get_contents($image));
+            $path = Storage::put($filePath, file_get_contents($image));
             // $path = Storage::disk('s3')->url($path);
         }
     }

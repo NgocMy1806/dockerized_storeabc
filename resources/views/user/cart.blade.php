@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="cart-sec simpleCart_shelfItem">
                                     <div class="cart-item cyc">
-                                        <img src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $item['thumbnail'], '+2 minutes')  }}"class="img-responsive"
+                                        <img src="{{ $item['thumbnail'] }}"class="img-responsive"
                                             alt="" />
                                     </div>
                                     <div class="cart-item-info">

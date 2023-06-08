@@ -12,14 +12,14 @@
             </div>
             @if ($hotProducts->isNotEmpty())
                 <ul class="content-home cbp-vm-switcher" style="list-style: none; padding-top:5px">
-                    @foreach ($hotProducts as $product)
+                    @foreach ($hotProducts as $product){{$product->thumbnail}}
                         <li class="simpleCart_shelfItem col-sm-4">
                             <div class="view view-first">
                                 <a class="cbp-vm-image" href="{{ route('detailPrd', $product->id) }}"></a>
                                 <div class="inner_content clearfix">
                                     <div class="product_image">
                                         <div class="mask1"><img
-                                                src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $product->thumbnail->name, '+2 minutes')  }}"
+                                            src="{{  $product->thumbnail->url }}"
                                                 alt="image" class="img-responsive zoom-img"></div>
 
 

@@ -6,12 +6,12 @@
                 <div class="labout span_1_of_a1">
                     <div class="flexslider">
                         <ul class="slides">
-                            <li data-thumb="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $product->thumbnail->name, '+2 minutes') }}">
-                                <img src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $product->thumbnail->name, '+2 minutes')  }}" />
+                            <li data-thumb="{{  $product->thumbnail->url }}">
+                                <img src="{{  $product->thumbnail->url }}"/>
                             </li>
                             @foreach ($images as $image)
-                                <li data-thumb="{{Storage::disk('s3')->temporaryUrl("images"."/". $image->name, '+2 minutes')  }}">
-                                    <img src="{{ Storage::disk('s3')->temporaryUrl("images"."/". $image->name, '+2 minutes')  }}"  alt="">
+                                <li data-thumb="{{ $image->url  }}">
+                                    <img src="{{ $image->url }}"  alt="">
                     
                     @endforeach
                     </ul>
@@ -108,7 +108,7 @@
         <h3 class="m_1">Related Products</h3>
         @foreach($relatedProducts as $relatedProduct)
         <ul class="product">
-            <li class="product_img"><img src="{{ Storage::disk('s3')->temporaryUrl("images"."/". $relatedProduct->thumbnail->name, '+2 minutes')  }}" class="img-responsive" alt="thumbnail" /></li>
+            <li class="product_img"><img src="{{ $relatedProduct->thumbnail->url }}" class="img-responsive" alt="thumbnail" /></li>
             <li class="product_desc">
                 <h4><a href="{{ route('detailPrd', $relatedProduct->id) }}">{{$relatedProduct->name}}</a></h4>
                 <p class="single_price">$ {{$relatedProduct->price}}</p>

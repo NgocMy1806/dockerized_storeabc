@@ -18,7 +18,7 @@
                     @foreach ($cart as $item)
                         <tr>
                             <td><img width="50" height="50"
-                                    class="img-thumbnail"src="{{ Storage::disk('s3')->temporaryUrl("thumbs"."/". $item['thumbnail'], '+2 minutes')  }}"></td>
+                                    class="img-thumbnail"src="{{ $item['thumbnail'] }}"></td>
                             <td>{{ $item['name'] }}</td>
                             <td>{{ $item['price'] }}</td>
                             <td>{{ $item['quantity'] }}</td>

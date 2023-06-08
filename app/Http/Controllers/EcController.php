@@ -225,7 +225,8 @@ class EcController extends Controller
     {
         $product = Product::with('thumbnail')->find($id);
 
-        $thumbnail = $product->thumbnail()->first()->name;
+        // $thumbnail = $product->thumbnail()->first()->name;
+        $thumbnail = $product->thumbnail->url;
         if (!$product) {
             abort(404);
         }
