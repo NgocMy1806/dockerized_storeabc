@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrapFour();
         if(env('APP_ENV') !== 'local') {
-            dd(env('APP_ENV'));
+        
             \Illuminate\Support\Facades\URL::forceScheme('https');
             // $url->forceScheme('https');
         }
