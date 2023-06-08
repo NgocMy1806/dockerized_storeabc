@@ -24,7 +24,7 @@ class Media extends Model
 
     public function getUrlAttribute()
     {
-        if (env('APP_ENV=local' !== 'local')) {
+        if (env('APP_ENV') !== 'local') {
             if ($this->type == "product_image") {
                 return Storage::temporaryUrl("images" . "/" . $this->attributes['name'], '+2 minutes');
             } else {
