@@ -177,10 +177,10 @@ class AuthController extends Controller
         $logoutRedirectUri = env('COGNITO_LOGOUT_REDIRECT_URI');
         $requestUrl = "{$logoutUrl}?client_id={$clientId}&redirect_uri={$logoutRedirectUri}";
         // dd($requestUrl);
-        // call logout endpoint
-       // $response = Http::get($requestUrl);
-   
-
+          if(env('APP_ENV')=='local'){
+               $response = Http::get($requestUrl);
+          }else{
+      
 // Delete ALB cookies
     $response = new Response();
     $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-0', null, -1));
@@ -191,6 +191,7 @@ class AuthController extends Controller
     $response->setStatusCode(302);
     $response->header('Location', $requestUrl);
    return redirect('/index');
+          }
 }
 
  
