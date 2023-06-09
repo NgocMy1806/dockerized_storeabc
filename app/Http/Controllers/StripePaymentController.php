@@ -36,11 +36,11 @@ class StripePaymentController extends Controller
   public function checkout(Request $request)
   {
     $paymentMethod = $request->input('payment_method');
-    // dd($paymentMethod);
+
+   
     if ($paymentMethod == 'stripe') {
       return $this->checkoutStripe($request);
-      // } else if ($paymentMethod == 'bank_transfer') {
-      //   return $this->checkoutBankTransfer($request);
+  
     } else {
       return $this->checkoutBankTransfer($request);
     }
@@ -58,7 +58,7 @@ class StripePaymentController extends Controller
       'line_items' => $this->getLineItems($cart),
       'mode' => 'payment',
       'success_url' => route('checkoutOK') . '?session_id={CHECKOUT_SESSION_ID}',
-      'cancel_url' => route('getCheckout'),
+      'cancel_url' => route('getCheckout')
     ]);
 
     // Store email in session for later use
@@ -80,20 +80,19 @@ class StripePaymentController extends Controller
     $line_items = [];
 
     foreach ($cart as $item) {
-      // dd($item['thumbnail']);
       $line_items[] = [
         'price_data' => [
           'currency' => 'usd',
           'unit_amount' => $item['price'] * 100, // Stripe requires the price in cents
           'product_data' => [
             'name' => $item['name'],
-            'images' => [Storage::disk('s3')->temporaryUrl("thumbs"."/".  $item['thumbnail'], '+2 minutes') ]
+            // 'images' => [Storage::temporaryUrl("thumbs"."/".  $item['thumbnail'], '+10 minutes') ]
+          'images' => [$item['thumbnail']]
           ],
         ],
         'quantity' => $item['quantity'],
       ];
     }
-
     return $line_items;
   }
 
