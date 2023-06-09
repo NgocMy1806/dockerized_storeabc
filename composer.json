@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0",
+        "aws/aws-sdk-php": "^3.269",
         "bensampo/laravel-enum": "^6.3",
         "firebase/php-jwt": "^6.5",
         "fruitcake/laravel-cors": "^2.0.5",
@@ -13,7 +14,7 @@
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.8",
-        "league/flysystem-aws-s3-v3": "^3.0",
+        "league/flysystem-aws-s3-v3": "^3.15",
         "predis/predis": "^2.1",
         "stripe/stripe-php": "^10.12"
     },

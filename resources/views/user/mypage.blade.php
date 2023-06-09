@@ -30,7 +30,7 @@
                         <ul class="product-list">
                             @foreach ($order->orderDetails as $item)
                             <li><img width="50" height="50"
-                                class="img-thumbnail"src="{{  $product->thumbnail->url }}">  {{ $item->product->name }}: ({{ $item->quantity }} x {{ $item->price }})</li>
+                                class="img-thumbnail"src="{{  $item->product->thumbnail->url }}">  {{ $item->product->name }}: ({{ $item->quantity }} x {{ $item->price }})</li>
                         @endforeach
                         </ul>
                     </div>

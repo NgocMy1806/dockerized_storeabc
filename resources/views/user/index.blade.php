@@ -5,6 +5,9 @@
         <div class="container-fluid"> 
 
             <div class="heading-title text-center" style="padding-top: 25px">
+                @if ($instanceId)
+                    <h2>{{ $instanceId }}</h2>
+                @endif
                 <h2 class="">Trendy</h2>
                 <p>
                     Trendy product Trendy product Trendy product Trendy product
@@ -12,7 +15,7 @@
             </div>
             @if ($hotProducts->isNotEmpty())
                 <ul class="content-home cbp-vm-switcher" style="list-style: none; padding-top:5px">
-                    @foreach ($hotProducts as $product){{$product->thumbnail}}
+                    @foreach ($hotProducts as $product)
                         <li class="simpleCart_shelfItem col-sm-4">
                             <div class="view view-first">
                                 <a class="cbp-vm-image" href="{{ route('detailPrd', $product->id) }}"></a>

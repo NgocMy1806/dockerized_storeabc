@@ -26,9 +26,9 @@ class Media extends Model
     {
         if (env('APP_ENV') !== 'local') {
             if ($this->type == "product_image") {
-                return Storage::temporaryUrl("images" . "/" . $this->attributes['name'], '+2 minutes');
+                return Storage::temporaryUrl("images" . "/" . $this->attributes['name'], '+6000 minutes');
             } else {
-                return Storage::temporaryUrl("thumbs" . "/" . $this->attributes['name'], '+2 minutes');
+                return Storage::temporaryUrl("thumbs" . "/" . $this->attributes['name'], '+6000 minutes');
             }
         } else {
             if ($this->type == "product_image") {

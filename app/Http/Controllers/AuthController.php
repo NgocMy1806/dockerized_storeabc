@@ -169,15 +169,17 @@ class AuthController extends Controller
         $requestUrl = "{$logoutUrl}?client_id={$clientId}&redirect_uri={$logoutRedirectUri}";
         // dd($requestUrl);
         if (env('APP_ENV') == 'local') {
+            // dd(env('APP_ENV') );
             $response = Http::get($requestUrl);
             return redirect('/index');
         } else {
-
+// dd(env('APP_ENV') );
             // Delete ALB cookies
-            $response = new Response();
-            $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-0', null, -1));
-            $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-1', null, -1));
-            $response->withCookie(Cookie::make('AWSALBAuthNonce', null, -1));
+           $response = new Response();
+$response = $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-0', null, -1));
+$response = $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-1', null, -1));
+$response = $response->withCookie(Cookie::make('AWSALBAuthNonce', null, -1));
+
 
             // Call logout endpoint
             $response->setStatusCode(302);

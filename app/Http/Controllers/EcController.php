@@ -16,6 +16,8 @@ use App\Models\Customer;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 
+
+
 class EcController extends Controller
 {
     private $productService;
@@ -46,13 +48,19 @@ class EcController extends Controller
         $hotProducts = $this->ecService->getTop3HotProducts();
         $cart = session()->get('cart');
         $total = session()->get('total');
+        if (config('APP_ENV') !== 'local') {
+    $instanceId = file_get_contents('http://169.254.169.254/latest/meta-data/instance-id');
+} else {
+    $instanceId = null;
+}
 
         return view(
             'user.index',
             [
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
-                'hotProducts' => $hotProducts
+                'hotProducts' => $hotProducts,
+                'instanceId'=>$instanceId
             ]
         );
     }

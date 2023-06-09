@@ -143,20 +143,29 @@ class ProductService
             $id = $product->id;
 
             if ($request->has('tags')) {
-                $selectedTags = $request->input('tags');
+                $selectedTags = $request->input('tags'); //get selected tag id
+               
+                // Get the existing tag IDs
+                $existingTagIds = Tag::whereIn('id', $selectedTags)->pluck('id')->all();
+              
+                   $newTags = array_diff($selectedTags, $existingTagIds);
+           
+                foreach ($newTags as $newTag) {
 
-                // Create new tags if they don't exist
-                $tagIds = [];
-                foreach ($selectedTags as $tag) {
-                    $tagModel = Tag::firstOrCreate([
-                        'name' => $tag,
-                        'slug' => Str::slug($tag),
+                    $tagModel = new Tag([
+                        'name' => $newTag,
+                        'slug' => Str::slug($newTag),
                     ]);
-                    $tagIds[] = $tagModel->id;
+                     $tagModel->save();
+                    $existingTagIds[] = $tagModel->id;
                 }
-                $product->tags()->sync($tagIds);
+                // dd($existingTagIds);
+                  $product->tags()->sync($existingTagIds);
+            } else {
+                // If no tags were selected, remove all tags from the product
+                $product->tags()->sync([]);
             }
-
+            
             $this->store_thumb($id, $request);
             $this->store_images($id, $request);
 
