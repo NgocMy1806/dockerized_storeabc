@@ -160,31 +160,31 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request)
+     public function logout(Request $request)
     {
+        //config Logout endpoint
         $request->session()->invalidate();
         $clientId = env('COGNITO_CLIENT_ID');
         $logoutUrl = env('COGNITO_LOGOUT_URL');
         $logoutRedirectUri = env('COGNITO_LOGOUT_REDIRECT_URI');
-        $requestUrl = "{$logoutUrl}?client_id={$clientId}&redirect_uri={$logoutRedirectUri}";
-        // dd($requestUrl);
-        if (env('APP_ENV') == 'local') {
-            // dd(env('APP_ENV') );
-            $response = Http::get($requestUrl);
-            return redirect('/index');
-        } else {
-// dd(env('APP_ENV') );
+        $requestUrl = "{$logoutUrl}?client_id={$clientId}&logout_uri={$logoutRedirectUri}";
+       
             // Delete ALB cookies
-           $response = new Response();
+          $response = new Response();
 $response = $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-0', null, -1));
 $response = $response->withCookie(Cookie::make('AWSELBAuthSessionCookie-1', null, -1));
 $response = $response->withCookie(Cookie::make('AWSALBAuthNonce', null, -1));
 
+// Add cache control headers
+$response = $response->header('Cache-Control', 'no-store, no-cache, must-revalidate');
+$response = $response->header('Pragma', 'no-cache');
+$response = $response->header('Expires', '0');
 
-            // Call logout endpoint
-            $response->setStatusCode(302);
-            $response->header('Location', $requestUrl);
-            return redirect('/index');
-        }
+// Call logout endpoint
+$response->setStatusCode(302);
+$response->header('Location', $requestUrl);
+return $response;
+
+        
     }
 }
