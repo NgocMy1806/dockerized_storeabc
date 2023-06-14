@@ -29,10 +29,25 @@ body a{
 	-ms-transition:0.5s all;
 }
 
+.banner-cloudfront {
+	background: url({{ env('CLOUDFRONT_DOMAIN') }}/images/3.jpg) no-repeat center top;
+		background-size: cover;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	min-height:800px;
+	text-align: center;
+	padding-top:1em;
+	background-position: calc(50% - 28px) center;
+}
+
+.banner-local {
+	background: url(../images/3.jpg) no-repeat center top;
+}
 
 
 .banner {
-background: url(../images/3.jpg) no-repeat center top;
+/*background: url(../images/3.jpg) no-repeat center top;*/
 	background-size: cover;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
