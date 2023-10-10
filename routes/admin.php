@@ -11,9 +11,10 @@ use App\Http\Controllers\OrderController;
 // Route::get('/',[CategoryController::class,'index'])->name('index');
 
 //Route::get('login.html',AuthController::class,'loginForm')->name('admin.login'); 
-Route::get('login.html', [AuthController::class, 'loginForm'])->name('admin.login');
-Route::post('login.html', [AuthController::class, 'login'])->name('admin.postLogin');
-Route::get('logout.html', [AuthController::class, 'logout'])->name('admin.logout');
+Route::get('login', [AuthController::class, 'loginForm'])->name('admin.login');
+Route::post('login', [AuthController::class, 'login'])->name('admin.postLogin');
+// Route::get('logout.html', [AuthController::class, 'logout'])->name('admin.logout');
+Route::get('logout', [AuthController::class, 'logout'])->name('admin.logout');
 
 Route::middleware(['customAuth:admin'])->group(function () {
     Route::resource('categories', CategoryController::class);

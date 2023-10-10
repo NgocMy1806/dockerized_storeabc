@@ -49,7 +49,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				</select>
 			 </div>
 			 <ul class="header_user_info">
-			  <a class="login" href="login.html">
+			  <!-- <a class="login" href="login.html"> -->
+			  <a class="login" href="login">
 				<i class="user"> </i> 
 				<li class="user_desc">My Account</li>
 			  </a>
