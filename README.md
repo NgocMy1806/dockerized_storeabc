@@ -1,5 +1,5 @@
 ### Trên local
-Sau khi clone prj về, chạy command sau:
+Sau khi clone prj về, cd vào thư mục gốc của dự án, rồi chạy lần lượt các command sau:
 - docker-compose up
 - docker exec -it app-container-id bash
 - composer update
