@@ -25,7 +25,7 @@ class EcController extends Controller
     public $ecService;
     public $watchCategories;
     public $bagCategories;
-    
+
     public function __construct(ProductService $productService, CategoryService $categoryService, EcService $ecService)
     {
         $this->productService = $productService;
@@ -33,7 +33,6 @@ class EcController extends Controller
         $this->ecService = $ecService;
         $this->watchCategories = $this->ecService->getWatchCategories();
         $this->bagCategories = $this->ecService->getBagCategories();
-       
     }
 
 
@@ -48,11 +47,12 @@ class EcController extends Controller
         $hotProducts = $this->ecService->getTop3HotProducts();
         $cart = session()->get('cart');
         $total = session()->get('total');
-        if (config('APP_ENV') !== 'local') {
-    $instanceId = file_get_contents('http://169.254.169.254/latest/meta-data/instance-id');
-} else {
-    $instanceId = null;
-}
+        //dd(getenv('APP_ENV'));
+        if (getenv('APP_ENV')!== 'local') {
+            $instanceId = file_get_contents('http://169.254.169.254/latest/meta-data/instance-id');
+        } else {
+            $instanceId = null;
+        }
 
         return view(
             'user.index',
@@ -60,16 +60,16 @@ class EcController extends Controller
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
                 'hotProducts' => $hotProducts,
-                'instanceId'=>$instanceId
+                'instanceId' => $instanceId
             ]
         );
     }
 
     public function getListBags(Request $request)
     {
-       
-        $parentCategory=1;
-        $result = $this->ecService->getListPrd($request,$parentCategory);
+
+        $parentCategory = 1;
+        $result = $this->ecService->getListPrd($request, $parentCategory);
         $products = $result['products'];
         $prd_count = $result['prd_count'];
         $products_count = $result['products_count'];
@@ -85,7 +85,7 @@ class EcController extends Controller
                     'sort_key' => $request->sort_key,
                     'price_range' => $request->price_range,
                     'prd_count' => $prd_count,
-                   'products_count'=>$products_count
+                    'products_count' => $products_count
                 ]
             )->render();
         }
@@ -98,8 +98,8 @@ class EcController extends Controller
                 'sort_key' => $request->sort_key ? $request->sort_key : null,
                 'price_range' => $request->price_range ? $request->price_range : null,
                 'prd_count' => $prd_count,
-                'parentCategory' =>$parentCategory,
-                'products_count'=>$products_count
+                'parentCategory' => $parentCategory,
+                'products_count' => $products_count
             ]
         );
     }
@@ -119,11 +119,11 @@ class EcController extends Controller
                 'sort_key' => $request->sort_key,
                 'price_range' => $request->price_range,
                 'prd_count' => $prd_count,
-                'active_category_id' => $active_category_id, 
-                'products_count'=>$products_count
+                'active_category_id' => $active_category_id,
+                'products_count' => $products_count
             ])->render();
         }
-    
+
         return view('user.listbags', [
             'watchCategories' => $this->watchCategories,
             'bagCategories' => $this->bagCategories,
@@ -131,15 +131,15 @@ class EcController extends Controller
             'sort_key' => $request->sort_key ? $request->sort_key : null,
             'price_range' => $request->price_range ? $request->price_range : null,
             'prd_count' => $prd_count,
-            'active_category_id' => $active_category_id, 
-            'products_count'=>$products_count
+            'active_category_id' => $active_category_id,
+            'products_count' => $products_count
         ]);
     }
-    
+
 
     public function getListWatches(Request $request)
     {
-        $parentCategory=2;
+        $parentCategory = 2;
         $result = $this->ecService->getListPrd($request, $parentCategory);
         $products = $result['products'];
         $prd_count = $result['prd_count'];
@@ -155,7 +155,7 @@ class EcController extends Controller
                     'sort_key' => $request->sort_key,
                     'price_range' => $request->price_range,
                     'prd_count' => $prd_count,
-                    'products_count'=>$products_count
+                    'products_count' => $products_count
                 ]
             )->render();
         }
@@ -168,7 +168,7 @@ class EcController extends Controller
                 'sort_key' => $request->sort_key ? $request->sort_key : null,
                 'price_range' => $request->price_range ? $request->price_range : null,
                 'prd_count' => $prd_count,
-                'products_count'=>$products_count
+                'products_count' => $products_count
             ]
         );
     }
@@ -189,11 +189,11 @@ class EcController extends Controller
                 'sort_key' => $request->sort_key,
                 'price_range' => $request->price_range,
                 'prd_count' => $prd_count,
-                'active_category_id' => $active_category_id, 
-                'products_count'=>$products_count
+                'active_category_id' => $active_category_id,
+                'products_count' => $products_count
             ])->render();
         }
-    
+
         return view('user.listwatches', [
             'watchCategories' => $this->watchCategories,
             'bagCategories' => $this->bagCategories,
@@ -201,8 +201,8 @@ class EcController extends Controller
             'sort_key' => $request->sort_key ? $request->sort_key : null,
             'price_range' => $request->price_range ? $request->price_range : null,
             'prd_count' => $prd_count,
-            'active_category_id' => $active_category_id, 
-            'products_count'=>$products_count
+            'active_category_id' => $active_category_id,
+            'products_count' => $products_count
         ]);
     }
     public function getDetailPrd($id)
@@ -212,12 +212,12 @@ class EcController extends Controller
         $relatedProducts = Product::whereHas('tags', function ($query) use ($product) {
             $query->whereIn('tags.id', $product->tags->pluck('id'));
         })
-        ->where('products.id', '!=', $id)
-        ->with(['tags', 'thumbnail'])
-        ->orderBy('products.created_at', 'DESC')
-        ->limit(4)
-        ->get();
-        
+            ->where('products.id', '!=', $id)
+            ->with(['tags', 'thumbnail'])
+            ->orderBy('products.created_at', 'DESC')
+            ->limit(4)
+            ->get();
+
         return view(
             'user.detailPrd',
             [
@@ -225,7 +225,7 @@ class EcController extends Controller
                 'images' => $images,
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
-                'relatedProducts'=>$relatedProducts
+                'relatedProducts' => $relatedProducts
             ]
         );
     }
@@ -242,7 +242,6 @@ class EcController extends Controller
         $cart = session()->get('cart', []);
         if (isset($cart[$id])) {
             $cart[$id]['quantity'] += $request->quantity;
-           
         } else {
             $cart[$id] = [
                 'id' => $product->id,
@@ -251,8 +250,6 @@ class EcController extends Controller
                 'quantity' => $request->quantity,
                 'thumbnail' => $thumbnail
             ];
-
-            
         }
         $totalQuantity = array_sum(array_column($cart, 'quantity'));
 
@@ -261,7 +258,7 @@ class EcController extends Controller
         foreach ($cart as $item) {
             $total += $item['price'] * $item['quantity'];
         }
-        
+
         session()->put('cart', $cart);
         session()->put('total', $total);
         session()->put('totalQuantity', $totalQuantity);
@@ -272,7 +269,7 @@ class EcController extends Controller
             'total' => $total,
             'totalQuantity' => $totalQuantity,
             // 'cartCount' => count(session('cart')), show number of distinct prd in cart
-            
+
         ]);
     }
 
@@ -280,8 +277,8 @@ class EcController extends Controller
     {
         // dd(session()->all());
         $cart = session()->get('cart', []);
-    //     dd(session()->all());
-    // dd(session('totalQuantity'));
+        //     dd(session()->all());
+        // dd(session('totalQuantity'));
 
         // $total = 0;
         // foreach ($cart as $item) {
@@ -289,14 +286,14 @@ class EcController extends Controller
         // }
         // $totalQuantity = array_sum(array_column($cart, 'quantity'));
 
-        $shipping_fee=0.00;
+        $shipping_fee = 0.00;
         return view(
             'user.cart',
             [
                 'watchCategories' => $this->watchCategories,
                 'bagCategories' => $this->bagCategories,
                 'cart' => $cart,
-                'shipping_fee'=>$shipping_fee,
+                'shipping_fee' => $shipping_fee,
                 // 'total' =>  $total,
                 // 'totalQuantity' => $totalQuantity,
             ]
@@ -336,29 +333,29 @@ class EcController extends Controller
     }
 
     public function changeQty(Request $request)
-{
-    $cart = session()->get('cart', []);
-    $shipping_fee=0.00;
-    $total = 0;
-    $totalQuantity = 0;
-    $cart[$request->id]['quantity'] = $request->quantity;
-    session()->put('cart', $cart);
+    {
+        $cart = session()->get('cart', []);
+        $shipping_fee = 0.00;
+        $total = 0;
+        $totalQuantity = 0;
+        $cart[$request->id]['quantity'] = $request->quantity;
+        session()->put('cart', $cart);
 
-    foreach ($cart as $item) {
-        $total += $item['price'] * $item['quantity'];
-        $totalQuantity += $item['quantity'];
+        foreach ($cart as $item) {
+            $total += $item['price'] * $item['quantity'];
+            $totalQuantity += $item['quantity'];
+        }
+        session()->put('total', $total);
+        session()->put('totalQuantity', $totalQuantity);
+
+        return response()->json([
+            'success' => 'Changed quantity successfully!',
+            'cart' => $cart,
+            'total' => $total,
+            'totalQuantity' => $totalQuantity,
+            'shipping_fee' => $shipping_fee,
+        ]);
     }
-    session()->put('total', $total);
-    session()->put('totalQuantity', $totalQuantity);
-
-    return response()->json([
-        'success' => 'Changed quantity successfully!',
-        'cart' => $cart,
-        'total' => $total,
-        'totalQuantity' => $totalQuantity,
-        'shipping_fee'=>$shipping_fee,
-    ]);
-}
 
 
     public function getCheckout()
@@ -373,13 +370,12 @@ class EcController extends Controller
 
         $countries = Country::all();
         //dd($countries);
-        $user=null;
-        if(session()->has('userId'))
-        {
-            $id=session()->get('userId');
-            $user= Customer::with('country', 'state', 'city')->find($id);
+        $user = null;
+        if (session()->has('userId')) {
+            $id = session()->get('userId');
+            $user = Customer::with('country', 'state', 'city')->find($id);
         }
-        
+
         return view(
             'user.checkout',
             [
@@ -388,7 +384,7 @@ class EcController extends Controller
                 'cart' => $cart,
                 'total' =>  $total,
                 'countries' => $countries,
-                'user'=>$user
+                'user' => $user
             ]
         );
     }
@@ -403,20 +399,22 @@ class EcController extends Controller
         return response()->json(['cities' => $cities]);
     }
 
-    public function search (Request $request)
+    public function search(Request $request)
     {
         // dd('hi');
-        $result=$this->ecService->search($request->keyword);
+        $result = $this->ecService->search($request->keyword);
         $products = $result['products'];
         $countResult = $result['countResult'];
-        return view('user.searchResult',
-        [
-            'watchCategories' => $this->watchCategories,
-            'bagCategories' => $this->bagCategories,
-            'products' => $products,
-            'keyword' => $request->keyword,
-            'countResult' => $countResult
-        ]);
+        return view(
+            'user.searchResult',
+            [
+                'watchCategories' => $this->watchCategories,
+                'bagCategories' => $this->bagCategories,
+                'products' => $products,
+                'keyword' => $request->keyword,
+                'countResult' => $countResult
+            ]
+        );
     }
 
     public function getMypage($id)
@@ -425,15 +423,16 @@ class EcController extends Controller
         $user = Customer::with('country', 'state', 'city')->find($id);
 
         $orders = $this->ecService->getOrderHistory($id);
-// dd($orders);
-        return view('user.mypage', 
-        [
-            // 'userName'=>$userName,
-             'orders'=>  $orders ,
-             'user'=>$user,
-            'watchCategories' => $this->watchCategories,
-            'bagCategories' => $this->bagCategories,
-        ]);
+        // dd($orders);
+        return view(
+            'user.mypage',
+            [
+                // 'userName'=>$userName,
+                'orders' =>  $orders,
+                'user' => $user,
+                'watchCategories' => $this->watchCategories,
+                'bagCategories' => $this->bagCategories,
+            ]
+        );
     }
-
 }

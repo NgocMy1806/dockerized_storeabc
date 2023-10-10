@@ -16,3 +16,7 @@ yarn-error.log
 /.vscode-server
 /data
 /apache
+/storage/logs
+/storage/framework
+.git
+.cache 

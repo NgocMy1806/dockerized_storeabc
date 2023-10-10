@@ -57,7 +57,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <body>
     <!--<div class="banner" style="min-height:341.510px; margin-bottom: 40px;">-->
     <!--<div class=" {{ env('APP_ENV') !== 'local' ? 'banner-cloudfront' : 'banner-local' }} banner" style="min-height:341.510px; margin-bottom: 40px;">-->
-        <div class="banner" style="{{ env('APP_ENV') !== 'local' ? 'background: url('.env('CLOUDFRONT_DOMAIN').'/common/3.jpg) no-repeat center top' : 'background: url(../images/3.jpg) no-repeat center top' }}; min-height: 341.510px; margin-bottom: 40px;">
+        <div class="banner" style="{{ getenv('APP_ENV') !== 'local' ? 'background: url('.env('CLOUDFRONT_DOMAIN').'/common/3.jpg) no-repeat center top' : 'background: url(../user/images/3.jpg) no-repeat center top' }}; min-height: 341.510px; margin-bottom: 40px;">
 
         <div class="container">
             @include('user.layout.components.headertop')

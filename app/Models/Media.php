@@ -50,8 +50,10 @@ class Media extends Model
         }
     } else {
         if ($this->type == "product_image") {
+            // return asset('storage/images/' . $this->attributes['name']);
             return asset('storage/images/' . $this->attributes['name']);
         } else {
+            // return asset('storage/thumbs/' . $this->attributes['name']);
             return asset('storage/thumbs/' . $this->attributes['name']);
         }
     }

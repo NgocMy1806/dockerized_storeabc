@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use app\Models\Admin;
+use App\Models\Admin;
 
 class AdminsTableSeeder extends Seeder
 {

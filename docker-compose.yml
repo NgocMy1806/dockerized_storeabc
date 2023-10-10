@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+  app:
+    image: storeabc
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: cogredis
+    depends_on:
+      - redis
+      - mysql
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+      - /home/mymy/practice-Docker/storeabc/data/img:/var/www/html/storage/app/public
+
+  redis:
+    image: redis:7.2.1-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=null
+      - REDIS_PORT=6379
+      - REDIS_CLIENT=predis
+    volumes:
+      - /home/mymy/practice-Docker/storeabc/data/redis:/data
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    volumes:
+      - /home/mymy/practice-Docker/storeabc/data/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=storeabcc
