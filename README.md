@@ -1,5 +1,5 @@
 Điều kiện tiền đề: máy đã cài docker, docker-compose, git.
-- Casch install docker trên amz linux 2: https://www.cyberciti.biz/faq/how-to-install-docker-on-amazon-linux-2/ 
+- Cách install docker trên amz linux 2: https://www.cyberciti.biz/faq/how-to-install-docker-on-amazon-linux-2/ 
 
 ### Trên local
 Sau khi clone prj về, cd vào thư mục gốc của dự án, rồi chạy lần lượt các command sau:
