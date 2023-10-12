@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: cogredis
+    container_name: storeabc
     depends_on:
       - redis
       - mysql
