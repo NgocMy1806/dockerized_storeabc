@@ -17,7 +17,7 @@ URL login vào admin: http://localhost/admin/login
 Acc admin default: mymy /12345678
 
 ### Trên prd
-(Giả định đã tạo, config hoàn thiện EC2, RDS, Elasticache Redis, S3 bucket, Cognito) /n
+(Giả định đã tạo, config hoàn thiện EC2, RDS, Elasticache Redis, S3 bucket, Cognito) \n
 Sau khi clone prj về,  cd vào thư mục gốc của dự án, rồi chạy lần lượt các command sau:
 - docker build -t storeabc:v1 .
 - docker run -d -p 8080:80 --name storeabc storeabc:v1
