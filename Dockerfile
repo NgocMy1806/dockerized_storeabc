@@ -31,7 +31,7 @@ RUN composer global require "laravel/installer" && composer global require "phpu
 ENV PATH $PATH:/home/laravel/.composer/vendor/bin
 
 COPY  .env.example .env
-USER www-data:www-data
+RUN mkdir apache
 RUN chown -R www-data:www-data /var/www/html && a2enmod rewrite
 EXPOSE 80
 CMD apachectl -DFOREGROUND

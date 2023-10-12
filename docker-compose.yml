@@ -12,7 +12,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - .:/var/www/html
+      #- .:/var/www/html (only use in local enviroment)
       - /home/mymy/practice-Docker/storeabc/data/img:/var/www/html/storage/app/public
 
   redis:
