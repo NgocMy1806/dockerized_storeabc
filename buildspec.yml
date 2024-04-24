@@ -12,6 +12,7 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -t $IMAGE_REPO_NAME:latest .
+      - echo ${GIT_COMMIT_HASH}   
       - docker tag $IMAGE_REPO_NAME:latest ${ECR_REPOSITORY}:${GIT_COMMIT_HASH}   
   post_build:
     commands:
