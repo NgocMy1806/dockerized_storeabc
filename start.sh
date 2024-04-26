@@ -9,3 +9,4 @@ echo "Storage symbolic link has been created."
 echo "Checking if seed data has been populated..."
 if [ ! -f "database/seeds/DatabaseSeeder.php" ]; then php artisan db:seed; fi
 echo "Seed data has been populated."
+apachectl -DFOREGROUND

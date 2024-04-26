@@ -18,3 +18,5 @@ yarn-error.log
 /apache
 .git
 .cache 
+/storage/app/images
+/storage/app/thumbs

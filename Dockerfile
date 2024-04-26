@@ -30,8 +30,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer global require "laravel/installer" && composer global require "phpunit/phpunit"  
 ENV PATH $PATH:/home/laravel/.composer/vendor/bin
 
+RUN composer install --no-interaction
+
 COPY  .env.example .env
 RUN mkdir apache
 RUN chown -R www-data:www-data /var/www/html && a2enmod rewrite
 EXPOSE 80
-CMD apachectl -DFOREGROUND
+RUN chmod +x start.sh
+ENTRYPOINT ["/start.sh"]
+#CMD apachectl -DFOREGROUND
