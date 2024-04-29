@@ -1,8 +1,5 @@
 FROM php:8.2-apache
 
-# create document root, fix permissions for www-data user and change owner to www-data
-WORKDIR /var/www/html
-COPY . /var/www/html
 RUN apt update && apt install -y \
         nodejs \
         npm \
@@ -22,6 +19,8 @@ RUN apt update && apt install -y \
     && docker-php-ext-install zip \
     && docker-php-source delete
 
+# create document root, fix permissions for www-data user and change owner to www-data 
+WORKDIR /var/www/html
 #COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/vhost.conf /etc/apache2/sites-available/000-default.conf 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -30,12 +29,20 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer global require "laravel/installer" && composer global require "phpunit/phpunit"  
 ENV PATH $PATH:/home/laravel/.composer/vendor/bin
 
-RUN composer install --no-interaction
+COPY composer.json ./
+COPY composer.lock ./
+RUN composer install --no-interaction --no-scripts --no-autoloader
+
+
+COPY . /var/www/html   
+
+RUN composer dump-autoload --optimize
 
 COPY  .env.example .env
 RUN mkdir apache
 RUN chown -R www-data:www-data /var/www/html && a2enmod rewrite
 EXPOSE 80
-RUN chmod +x start.sh
-ENTRYPOINT ["/start.sh"]
+COPY start.sh /var/www/html/start.sh
+RUN chmod +x /var/www/html/start.sh
+ENTRYPOINT ["/var/www/html/start.sh"]
 #CMD apachectl -DFOREGROUND
