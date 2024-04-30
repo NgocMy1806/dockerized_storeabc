@@ -7,8 +7,10 @@ services:
       dockerfile: ./Dockerfile
     container_name: storeabc
     depends_on:
-      - redis
-      - mysql
+      redis:
+        condition: service_started
+      mysql:
+        condition: service_healthy
     ports:
       - "80:80"
     volumes:
@@ -38,3 +40,9 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=storeabcc
+    healthcheck:
+      test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p$$MYSQL_ROOT_PASSWORD' ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      
