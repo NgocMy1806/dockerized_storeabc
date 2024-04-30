@@ -16,7 +16,7 @@ Sau đó, truy cập vào localhost để kiểm tra kết quả.
 URL login vào admin: http://localhost/admin/login
 Acc admin default: mymy /12345678
 
-Update 2024040: đã cho hết các lệnh migrate, key gen, seeder, storage link vào file script start.sh trong entry point của dockerfile => khi run container, file script sẽ auto run => ko cần chạy tay nữa => chỉ cần docker compose up -d để bật local
+Update 2024040: đã cho hết các lệnh migrate, key gen, seeder, storage link vào file script start.sh trong entry point của dockerfile, lệnh composer install cũng đã chạy khi build image luôn rồi => khi run container, file script sẽ auto run => ko cần chạy tay nữa => chỉ cần docker compose up -d để bật local
 
 ### Trên prd
 (Giả định đã tạo, config hoàn thiện EC2, RDS, Elasticache Redis, S3 bucket, Cognito) 
